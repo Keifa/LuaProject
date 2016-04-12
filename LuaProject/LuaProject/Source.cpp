@@ -1,11 +1,11 @@
-#include <iostream>
-#include "lua.hpp"
+#include "LuaHandler.h"
 
 int main()
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-	lua_State* L =  luaL_newstate();
+	LuaHandler lh;
+	lh.start();
 
 	std::system("pause");
 	return 0;
