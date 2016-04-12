@@ -7,17 +7,17 @@ Unit::Unit(const std::string name)
 	this->y = 0.0;
 }
 
-Unit::Unit(const std::string name, float x, float y)
-{
-	this->name = name;
-	this->x = x;
-	this->y = y;
-}
+//Unit::Unit(const std::string name, float x, float y)
+//{
+//	this->name = name;
+//	this->x = x;
+//	this->y = y;
+//}
 
 void Unit::print()
 {
-	std::cout	<< "[C++] Unit name: " << this->name
-				<< "\nPos: " << this->x << ", " << this->y << "\n";
+	std::cout	<< "[C++][Unit]\tUnit name: " << this->name
+				<< "\n\t\tPos: " << this->x << ", " << this->y << "\n";
 }
 
 void Unit::move(float x, float y)

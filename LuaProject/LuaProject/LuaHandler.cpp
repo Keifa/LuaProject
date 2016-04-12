@@ -16,7 +16,7 @@ LuaHandler::~LuaHandler()
 	
 }
 
-void LuaHandler::start()
+void LuaHandler::start(const char* scriptName)
 {
 	std::cout << "[C++] Starting Lua state\n";
 	this->L = luaL_newstate();
@@ -32,7 +32,7 @@ void LuaHandler::start()
 
 		// Load the script
 		std::cout << "[C++] Loading the Lua script\n";
-		int error = luaL_loadfile(L, "test.lua")
+		int error = luaL_loadfile(L, scriptName)
 			|| lua_pcall(L, 0, 0, 0);
 
 		if (error)
@@ -69,11 +69,9 @@ int createUnit(lua_State * ls)
 Unit* l_CheckUnit(lua_State * ls, int n)
 {
 	Unit* unitPtr = nullptr;
-
 	void* ptr = luaL_testudata(ls, n, "MetaUnit");
 	if (ptr != nullptr)
 		unitPtr = *(Unit**)ptr;
-	std::cout << "[C++] A Unit was Checked\n";
 	return unitPtr;
 }
 
@@ -81,8 +79,6 @@ int destroyUnit(lua_State * ls)
 {
 	Unit* unit = l_CheckUnit(ls, 1);
 	delete unit;
-	std::cout << "[C++] A Unit was deleted\n";
-
 	return 0;
 }
 
@@ -90,7 +86,6 @@ int printUnit(lua_State * ls)
 {
 	Unit* unit = l_CheckUnit(ls, 1);
 	unit->print();
-
 	return 0;
 }
 

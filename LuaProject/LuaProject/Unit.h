@@ -10,7 +10,7 @@ private:
 	float x, y;
 public:
 	Unit(const std::string name);
-	Unit(const std::string name, float x, float y);
+	//Unit(const std::string name, float x, float y);
 
 	void print();
 	void move(float x, float y);

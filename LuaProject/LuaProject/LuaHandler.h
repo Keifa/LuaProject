@@ -12,7 +12,7 @@ public:
 	LuaHandler();
 	~LuaHandler();
 
-	void start();
+	void start(const char* scriptName);
 };
 
 #endif
