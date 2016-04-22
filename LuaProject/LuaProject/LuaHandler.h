@@ -1,8 +1,7 @@
 #ifndef LUAHANDLER_H
 #define LUAHANDLER_H
 
-#include "lua.hpp"
-#include "Unit.h"
+#include "Player.h"
 
 class LuaHandler
 {
@@ -13,6 +12,7 @@ public:
 	~LuaHandler();
 
 	void start(const char* scriptName);
+	void load(const char* scriptName);
 };
 
 #endif

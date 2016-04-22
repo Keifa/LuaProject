@@ -1,10 +1,10 @@
 #include "LuaHandler.h"
 
-int createUnit(lua_State * ls);
-Unit* l_CheckUnit(lua_State * ls, int n);
-int destroyUnit(lua_State * ls);
-void registerUnit(lua_State * ls);
-
+int createPlayer(lua_State * ls);
+Player* l_CheckPlayer(lua_State * ls, int n);
+int destroyPlayer(lua_State * ls);
+int printPlayer(lua_State * ls);
+void registerPlayer(lua_State * ls);
 
 LuaHandler::LuaHandler()
 {
@@ -13,7 +13,7 @@ LuaHandler::LuaHandler()
 
 LuaHandler::~LuaHandler()
 {
-	
+	lua_close(L);
 }
 
 void LuaHandler::start(const char* scriptName)
@@ -28,7 +28,7 @@ void LuaHandler::start(const char* scriptName)
 		luaL_openlibs(L);
 
 		// Register UnitClass
-		registerUnit(L);
+		registerPlayer(L);
 
 		// Load the script
 		std::cout << "[C++] Loading the Lua script\n";
@@ -43,72 +43,84 @@ void LuaHandler::start(const char* scriptName)
 
 		// close the Lua state
 		std::cout << "[C++] Closing the Lua state\n";
-		lua_close(L);
+		
 	}
 }
 
-int createUnit(lua_State * ls)
+void LuaHandler::load(const char * scriptName)
+{
+	int error = luaL_loadfile(L, scriptName)
+		|| lua_pcall(L, 0, 0, 0);
+
+	if (error)
+	{
+		std::cerr << lua_tostring(L, -1) << std::endl;
+		lua_pop(L, 1);
+	}
+}
+
+int createPlayer(lua_State * ls)
 {
 	const char* name = lua_tolstring(ls, 1, nullptr);
-	if(name != nullptr)
+	if (name != nullptr)
 	{
-		Unit** unit = reinterpret_cast<Unit**>(lua_newuserdata(ls, sizeof(Unit*)));
-		*unit = new Unit(name);
+		Player** player = reinterpret_cast<Player**>(lua_newuserdata(ls, sizeof(Player*)));
+		*player = new Player(name);
 
-		luaL_getmetatable(ls, "MetaUnit");
+		luaL_getmetatable(ls, "MetaPlayer");
 		lua_setmetatable(ls, -2);
 
 		std::cout << "[C++] A Unit was created\n";
 	}
 	else
 		std::cout << "[C++] A Unit unsuccessfully created\n";
-	
+
 	return 1;
 }
 
-Unit* l_CheckUnit(lua_State * ls, int n)
+Player* l_CheckPlayer(lua_State * ls, int n)
 {
-	Unit* unitPtr = nullptr;
-	void* ptr = luaL_testudata(ls, n, "MetaUnit");
+	Player* playerPtr = nullptr;
+	void* ptr = luaL_testudata(ls, n, "MetaPlayer");
 	if (ptr != nullptr)
-		unitPtr = *(Unit**)ptr;
-	return unitPtr;
+		playerPtr = *(Player**)ptr;
+	return playerPtr;
 }
 
-int destroyUnit(lua_State * ls)
+int destroyPlayer(lua_State * ls)
 {
-	Unit* unit = l_CheckUnit(ls, 1);
-	delete unit;
+	Player* player = l_CheckPlayer(ls, 1);
+	delete player;
 	return 0;
 }
 
-int printUnit(lua_State * ls)
+int printPlayer(lua_State * ls)
 {
-	Unit* unit = l_CheckUnit(ls, 1);
-	unit->print();
+	Player* player = l_CheckPlayer(ls, 1);
+	player->print();
 	return 0;
 }
 
-void registerUnit(lua_State * ls)
+void registerPlayer(lua_State * ls)
 {
 	// Create a luaL metatable. This metatable is not 
 	// exposed to Lua. The "luaL_Foo" label is used by luaL
 	// internally to identity things.
-	luaL_newmetatable(ls, "MetaUnit");
+	luaL_newmetatable(ls, "MetaPlayer");
 	// The Lua stack at this point looks like this:
 	//     
 	//     1| metatable "MetaMonster"   |-1
 
-	luaL_Reg unitRegs[] =
+	luaL_Reg playerRegs[] =
 	{
-		{"New",		createUnit},
-		{"Print",	printUnit},
-		{"__gc",	destroyUnit},
-		{NULL, NULL}
+		{ "New",	createPlayer },
+		{ "Print",	printPlayer },
+		{ "__gc",	destroyPlayer },
+		{ NULL, NULL }
 	};
 
 	// Register the C functions _into_ the metatable we just created.
-	luaL_setfuncs(ls, unitRegs, 0);
+	luaL_setfuncs(ls, playerRegs, 0);
 	lua_pushvalue(ls, -1);
 
 	// The Lua stack at this point looks like this:
@@ -137,5 +149,5 @@ void registerUnit(lua_State * ls)
 	// This allows Lua scripts to _override_ the metatable of Monster.
 	// For high security code this may not be called for but 
 	// we'll do this to get greater flexibility.
-	lua_setglobal(ls, "Unit");
+	lua_setglobal(ls, "Player");
 }

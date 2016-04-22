@@ -24,6 +24,12 @@
     <ClCompile Include="Unit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lauxlib.h">
@@ -47,9 +53,21 @@
     <ClInclude Include="Unit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ConstVars .h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="test.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="test2.lua">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

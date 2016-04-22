@@ -1,8 +1,7 @@
 
---Create Units
-local unit1 = Unit.New("Unit1")
-local unit2 = Unit.New("Unit2")
+
+--GLOBAL
+GLplayer = Player.New("Player")
 
 --print
-unit1:Print()
-unit2:Print()
+--player:Print()
