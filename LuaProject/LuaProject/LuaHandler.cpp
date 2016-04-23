@@ -4,11 +4,18 @@ int createPlayer(lua_State * ls);
 Player* l_CheckPlayer(lua_State * ls, int n);
 int destroyPlayer(lua_State * ls);
 int printPlayer(lua_State * ls);
+int setPositionPlayer(lua_State* ls);
+int drawPlayer(lua_State* ls);
 void registerPlayer(lua_State * ls);
 
 LuaHandler::LuaHandler()
 {
 	
+}
+
+LuaHandler::LuaHandler(sf::RenderTarget* target)
+{
+	targetPtr = target;
 }
 
 LuaHandler::~LuaHandler()
@@ -101,6 +108,20 @@ int printPlayer(lua_State * ls)
 	return 0;
 }
 
+int setPositionPlayer(lua_State* ls)
+{
+	Player* player = l_CheckPlayer(ls, 1);
+	player->setPosition(lua_tointeger(ls, 2), lua_tointeger(ls, 3));
+	return 0;
+}
+
+int drawPlayer(lua_State* ls)
+{
+	Player* player = l_CheckPlayer(ls, 1);
+	player->draw();
+	return 0;
+}
+
 void registerPlayer(lua_State * ls)
 {
 	// Create a luaL metatable. This metatable is not 
@@ -113,9 +134,11 @@ void registerPlayer(lua_State * ls)
 
 	luaL_Reg playerRegs[] =
 	{
-		{ "New",	createPlayer },
-		{ "Print",	printPlayer },
-		{ "__gc",	destroyPlayer },
+		{ "New",			createPlayer },
+		{ "Print",			printPlayer },
+		{ "SetPosition",	setPositionPlayer},
+		{ "Draw",			drawPlayer},
+		{ "__gc",			destroyPlayer },
 		{ NULL, NULL }
 	};
 

@@ -1,7 +1,7 @@
 
-
 --GLOBAL
 GLplayer = Player.New("Player")
 
---print
---player:Print()
+--TEST
+GLplayer:SetPosition(10, 10)
+GLplayer:Print()

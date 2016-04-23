@@ -10,14 +10,16 @@ class Game
 public:
 	Game();
 	virtual ~Game();
-
 	void start();
 
 private:
-	sf::RenderWindow* window;
+	//sf::RenderWindow* window;
 	sf::Event* events;
-
 	LuaHandler lh;
+	sf::RectangleShape* test;
+
+	void handleEvents();
+	void handleKeyboardEvents();
 };
 
 #endif

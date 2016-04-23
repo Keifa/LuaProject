@@ -4,6 +4,8 @@
 #include <string>
 #include <iostream>
 #include "lua.hpp"
+#include "SFML\Graphics.hpp"
+#include "ConstVars .h"
 
 class Player
 {
@@ -14,10 +16,12 @@ public:
 
 	void print();
 	void setPosition(int x, int y);
+	void draw();
 
 private:
 	std::string name;
 	int x, y;
+	sf::RectangleShape* rect;
 };
 
 #endif

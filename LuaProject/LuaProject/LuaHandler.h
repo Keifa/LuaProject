@@ -7,8 +7,11 @@ class LuaHandler
 {
 private:
 	lua_State* L;
+	sf::RenderTarget* targetPtr;
+
 public:
 	LuaHandler();
+	LuaHandler(sf::RenderTarget* target);
 	~LuaHandler();
 
 	void start(const char* scriptName);

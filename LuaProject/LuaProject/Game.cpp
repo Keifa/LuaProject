@@ -2,37 +2,58 @@
 
 Game::Game()
 {
-	window = new sf::RenderWindow(sf::VideoMode(window::WIDTH, window::HEIGHT), window::NAME);
+	window::renderWindow = new sf::RenderWindow(sf::VideoMode(window::WIDTH, window::HEIGHT), window::NAME);
 	events = new sf::Event();
+	test = new sf::RectangleShape(sf::Vector2f(100, 100));
+	test->setFillColor(sf::Color(0, 255, 0));
+	test->setPosition(sf::Vector2f(window::WIDTH * 0.5, window::HEIGHT * 0.5));
 }
 
 Game::~Game()
 {
-	delete window;
+	delete window::renderWindow;
 	delete events;
+	delete test;
 }
 
 void Game::start()
 {
 	lh.start("test.lua");
 
-	while (window->isOpen())
+	while (window::renderWindow->isOpen())
 	{
-		while (window->pollEvent(*events))
-		{
-			switch (events->type)
-			{
-			case sf::Event::Closed:
-				window->close();
-				break;
-			case sf::Event::KeyPressed:
-				lh.load("test2.lua");
-				break;
-			}
-		}
+		handleEvents();
+		window::renderWindow->clear();
+		window::renderWindow->draw(*test);
+		window::renderWindow->display();
+	}
+}
 
-		window->clear();
-		
-		window->display();
+void Game::handleEvents()
+{
+	while (window::renderWindow->pollEvent(*events))
+	{
+		switch (events->type)
+		{
+		case sf::Event::Closed:
+			window::renderWindow->close();
+			break;
+		case sf::Event::KeyPressed:
+			handleKeyboardEvents();
+			break;
+		}
+	}
+}
+
+void Game::handleKeyboardEvents()
+{
+	switch (events->key.code)
+	{
+	case sf::Keyboard::Space:
+		lh.load("test2.lua");
+		break;
+	case sf::Keyboard::Escape:
+		window::renderWindow->close();
+		break;
 	}
 }
