@@ -38,6 +38,13 @@ void Player::setPosition(int x, int y)
 	rect->setPosition(sf::Vector2f(x, y));
 }
 
+void Player::move(int x, int y)
+{
+	this->x += x;
+	this->y += y;
+	rect->setPosition(sf::Vector2f(this->x, this->y));
+}
+
 void Player::draw()
 {
 	//window::renderWindow->draw(*rect);

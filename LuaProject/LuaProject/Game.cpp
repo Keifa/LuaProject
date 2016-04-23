@@ -7,6 +7,7 @@ Game::Game()
 	test = new sf::RectangleShape(sf::Vector2f(100, 100));
 	test->setFillColor(sf::Color(0, 255, 0));
 	test->setPosition(sf::Vector2f(window::WIDTH * 0.5, window::HEIGHT * 0.5));
+	check = false;
 }
 
 Game::~Game()
@@ -24,7 +25,8 @@ void Game::start()
 	{
 		handleEvents();
 		window::renderWindow->clear();
-		window::renderWindow->draw(*test);
+		if(check)
+			window::renderWindow->draw(*test);
 		window::renderWindow->display();
 	}
 }
@@ -40,6 +42,7 @@ void Game::handleEvents()
 			break;
 		case sf::Event::KeyPressed:
 			handleKeyboardEvents();
+			check = !check;
 			break;
 		}
 	}
@@ -51,6 +54,7 @@ void Game::handleKeyboardEvents()
 	{
 	case sf::Keyboard::Space:
 		lh.load("test2.lua");
+		window::renderWindow->draw(*test);
 		break;
 	case sf::Keyboard::Escape:
 		window::renderWindow->close();

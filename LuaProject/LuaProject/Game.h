@@ -17,6 +17,7 @@ private:
 	sf::Event* events;
 	LuaHandler lh;
 	sf::RectangleShape* test;
+	bool check;
 
 	void handleEvents();
 	void handleKeyboardEvents();

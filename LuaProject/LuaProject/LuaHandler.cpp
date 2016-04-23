@@ -5,6 +5,7 @@ Player* l_CheckPlayer(lua_State * ls, int n);
 int destroyPlayer(lua_State * ls);
 int printPlayer(lua_State * ls);
 int setPositionPlayer(lua_State* ls);
+int movePlayer(lua_State* ls);
 int drawPlayer(lua_State* ls);
 void registerPlayer(lua_State * ls);
 
@@ -115,6 +116,13 @@ int setPositionPlayer(lua_State* ls)
 	return 0;
 }
 
+int movePlayer(lua_State* ls)
+{
+	Player* player = l_CheckPlayer(ls, 1);
+	player->move(lua_tointeger(ls, 2), lua_tointeger(ls, 3));
+	return 0;
+}
+
 int drawPlayer(lua_State* ls)
 {
 	Player* player = l_CheckPlayer(ls, 1);
@@ -137,6 +145,7 @@ void registerPlayer(lua_State * ls)
 		{ "New",			createPlayer },
 		{ "Print",			printPlayer },
 		{ "SetPosition",	setPositionPlayer},
+		{ "Move",			movePlayer},
 		{ "Draw",			drawPlayer},
 		{ "__gc",			destroyPlayer },
 		{ NULL, NULL }

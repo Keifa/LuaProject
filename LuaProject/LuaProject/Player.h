@@ -16,6 +16,7 @@ public:
 
 	void print();
 	void setPosition(int x, int y);
+	void move(int x, int y);
 	void draw();
 
 private:
