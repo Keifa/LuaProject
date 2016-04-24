@@ -1,28 +1,32 @@
---Recursive Fibonacci
-function fib(nr)
-	if nr > 2 then
-		return fib(nr - 1) + fib(nr - 2)
-	else
-		 return 1
-	end
+local adam = Player.New("adam")
+
+adam:SetPosition(100,50)
+
+adam:Print()
+
+print( "[Lua] Jump returned: " .. adam:Jump( 4 ) )
+
+print( "[Lua] GetX returned: " .. adam:GetX() )
+
+print( "[Lua] GetY returned: " .. adam:GetY() )
+
+function getX()
+	return adam:GetX()
 end
 
---Returns table with fibonacci from 1 to nr
-function getFibTable(nr)
-	returnTable = {}
-	for i = 1, nr do
-		returnTable[i] = fib(i)
-	end
-	return returnTable
+function getY()
+	return adam:GetY()
 end
 
---[[
-funcCalled = 0
---Function returns a string with todays date and how many time the function has been called
-function dateAndNrOfCalls()
-	date = os.date()
-	returnStr = date .. " nrOfCalls: " .. funcCalled
-	return returnStr
+function update(dt)
+	
+	adam:SetPosition(300 + 100 * math.sin(math.rad(dt)),50)
 end
-]]--
 
+function movePlayerX( input )
+	adam:SetPosition( adam:GetX() + input ,adam:GetY())
+end
+
+function movePlayerY( input )
+	adam:SetPosition(adam:GetX() ,adam:GetY() + input)
+end
