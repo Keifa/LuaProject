@@ -42,10 +42,8 @@ function Load()
 	local f = io.open("save.save", "r")
 	y = 1
 	for line in f:lines() do
-		print(line)
 		x = 1
 		for l in string.gmatch(line, "([^".. "," .."]+)") do
-		print(l)
 			A[y][x] = l
 			x = x + 1
 		end
