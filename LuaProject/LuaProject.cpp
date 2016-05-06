@@ -6,16 +6,27 @@
 #include "Player.h"
 #include "helper.h"
 #include "Window.h"
+#include <string>
 
 const int TILE_SIZE = 64;
 int main()
 {
 	//sf::RenderWindow window(sf::VideoMode(512, 512), "SFML works!");
-
+	
 	sf::RectangleShape shape(sf::Vector2f(TILE_SIZE, TILE_SIZE));
 	shape.setFillColor(sf::Color::Green);
 	shape.setOutlineColor(sf::Color::Black);
 	shape.setOutlineThickness(2);
+	
+	std::map<int, std::string> keyPressMap =
+	{
+		{ sf::Keyboard::Up,		"UP" },
+		{ sf::Keyboard::Down,	"DOWN" },
+		{ sf::Keyboard::Right,	"RIGHT" },
+		{ sf::Keyboard::Left,	"LEFT" },
+		{ sf::Keyboard::S,		"S" },
+		{ sf::Keyboard::R,		"R" }
+	};
 
 	lua_State* L = luaL_newstate();
 
@@ -44,6 +55,8 @@ int main()
 		lua_pop(L, 1);
 	}
 
+	std::string tempStr = "";
+			
 	Window w("window.lua");
 	int counter = 0;
 	while (w.IsOpen())
@@ -51,43 +64,38 @@ int main()
 		sf::Event event;
 		while (w.PollEvent(event))
 		{
-			if (event.type == sf::Event::Closed)
+			switch (event.type)
+			{
+			case sf::Event::Closed:
 				w.Close();
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
-			{
-				w.Close();
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
-			{
-				lua_getglobal(L, "Load");
-				error = lua_pcall(L, 0, 0, 0);
-				if (error)
+				break;
+			case sf::Event::KeyPressed:
+				tempStr = keyPressMap[event.key.code];
+				if (tempStr != "")
 				{
-					std::cerr << lua_tostring(L, -1) << std::endl;
-					lua_pop(L, 1);
+					lua_getglobal(L, "HandleKeyPress");
+					lua_pushstring(L, tempStr.c_str());
+					error = lua_pcall(L, 1, 0, 0);
+					if (error)
+					{
+						std::cerr << lua_tostring(L, -1) << std::endl;
+						lua_pop(L, 1);
+					}
 				}
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::T))
-			{
-				lua_getglobal(L, "Save");
-				error = lua_pcall(L, 0, 0, 0);
-				if (error)
-				{
-					std::cerr << lua_tostring(L, -1) << std::endl;
-					lua_pop(L, 1);
-				}
-			}
-			if (event.type == sf::Event::MouseButtonPressed)
-			{
+				else
+					std::cout << "Invalid input\n";
+				break;
+			case sf::Event::MouseButtonPressed:
 				lua_getglobal(L, "Clicked");
-				lua_pushinteger(L, event.mouseButton.x/64 + 1);
-				lua_pushinteger(L, event.mouseButton.y/64 + 1);
+				lua_pushinteger(L, event.mouseButton.x / 64 + 1);
+				lua_pushinteger(L, event.mouseButton.y / 64 + 1);
 				error = lua_pcall(L, 2, 0, 0);
 				if (error)
 				{
 					std::cerr << lua_tostring(L, -1) << std::endl;
 					lua_pop(L, 1);
 				}
+				break;
 			}
 		}
 		//window.clear();
@@ -144,4 +152,3 @@ int main()
 	lua_close(L);
 	return 0;
 }
-
