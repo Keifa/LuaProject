@@ -1,9 +1,9 @@
 
 A ={}
 
-A[1] = {0,3,0,0,0,0,0,0}
-A[2] = {1,1,1,0,0,0,0,0}
-A[3] = {0,1,0,0,0,0,0,0}
+A[1] = {3,0,0,0,0,0,0,0}
+A[2] = {0,0,0,0,0,0,0,0}
+A[3] = {0,0,0,0,0,0,0,0}
 A[4] = {0,0,0,0,0,0,0,0}
 A[5] = {0,0,0,0,0,0,0,0}
 A[6] = {0,0,0,0,0,0,0,0}
@@ -60,11 +60,62 @@ function Clicked(x,y)
 	A[y][x] = value
 end
 
+PLAYER = {}
+PLAYER["x"] = 1
+PLAYER["y"] = 1
+PLAYER["color"] = 3
+
+function Move(x, y)
+	print("Move ", x, y)
+	A[y][x] = PLAYER.color
+	print(A[y][x])
+end
+
+function ResetTile (x, y)
+	A[y][x] = 0
+end
+
 local switch = {}
-switch["UP"] =		function() print("UP") end
-switch["DOWN"] =	function() print("DOWN") end
-switch["RIGHT"] =	function() print("RIGHT") end
-switch["LEFT"] =	function() print("LEFT") end
+switch["UP"] =		
+function() 
+	print("UP")
+	if PLAYER.y > 1 then
+		ResetTile(PLAYER.x, PLAYER.y)
+		PLAYER.y = PLAYER.y - 1
+		Move(PLAYER.x, PLAYER.y)
+	end
+end
+
+switch["DOWN"] =	
+function() 
+	print("DOWN")
+	if PLAYER.y < 8 then
+		ResetTile(PLAYER.x, PLAYER.y)
+		PLAYER.y = PLAYER.y + 1
+		Move(PLAYER.x, PLAYER.y)
+	end
+end
+
+switch["RIGHT"] =	
+function() 
+	print("RIGHT")
+	if PLAYER.x < 8 then
+		ResetTile(PLAYER.x, PLAYER.y)
+		PLAYER.x = PLAYER.x + 1
+		Move(PLAYER.x, PLAYER.y)
+	end
+end
+
+switch["LEFT"] =
+function() 
+	print("LEFT")
+	if PLAYER.x > 1 then
+		ResetTile(PLAYER.x, PLAYER.y)
+		PLAYER.x = PLAYER.x - 1
+		Move(PLAYER.x, PLAYER.y)
+	end
+end
+
 switch["S"] =
 function()
 	print("Save")
