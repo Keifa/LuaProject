@@ -1,35 +1,31 @@
 
-A ={}
+local entitys = {}
 
-A[1] = {0,3,0,0,0,0,0,0}
-A[2] = {1,1,1,0,0,0,0,0}
-A[3] = {0,1,0,0,0,0,0,0}
-A[4] = {0,0,0,0,0,0,0,0}
-A[5] = {0,0,0,0,0,0,0,0}
-A[6] = {0,0,0,0,0,0,0,0}
-A[7] = {0,0,0,0,0,0,0,0}
-A[8] = {0,0,0,0,0,0,0,0}
+local p = Entity.New("player.png")
+p:SetPosition(2,2)
 
-B = {}
-for x=1, 10 do
-    B[x] = {}
-    for y=1, 10 do
-       	B[x][y] = 0
+mapSize = 10
+
+local map = {}
+for x=1, mapSize do
+    map[x] = {}
+    for y=1, mapSize do
+       	map[x][y] = 0
     end
 end
 
 function GetTile(x,y)
-	return A[y][x]
+	return map[y][x]
 end
 
 function Save()
 	print("Save")
 	local f = io.open("save.save", "w")
-	for y=1, 8 do
+	for y=1, mapSize do
     	local str = ""
-   			for x=1, 8 do
-       			str = str .. A[y][x]
-				if x < 8 then
+   			for x=1, mapSize do
+       			str = str .. map[y][x]
+				if x < mapSize then
 					str = str .. ","
 				end
     		end
@@ -46,7 +42,7 @@ function Load()
 	for line in f:lines() do
 		x = 1
 		for l in string.gmatch(line, "([^".. "," .."]+)") do
-			A[y][x] = l
+			map[y][x] = l
 			x = x + 1
 		end
 		y = y + 1
@@ -55,25 +51,42 @@ function Load()
 end
 
 function Clicked(x,y)
-	local value = A[y][x]
+	local value = map[y][x]
 	value = (value + 1) % 4
-	A[y][x] = value
+	map[y][x] = value
 end
 
 local switch = {}
-switch["UP"] =		function() print("UP") end
-switch["DOWN"] =	function() print("DOWN") end
-switch["RIGHT"] =	function() print("RIGHT") end
-switch["LEFT"] =	function() print("LEFT") end
+switch["UP"] =		function() 
+	if p:GetY() > 0 and GetTile(p:GetX()+1,(p:GetY())) == 0 then
+		p:Move(0,-1)
+	end
+end
+switch["DOWN"] =	function() 
+	if p:GetY() < mapSize and GetTile(p:GetX()+1,(p:GetY() + 2)) == 0 then
+		p:Move(0,1)
+	end
+end
+switch["RIGHT"] =	function() 
+	if p:GetX() < mapSize and GetTile((p:GetX() + 2), p:GetY()+1) == 0 then
+		p:Move(1,0)
+	end
+end
+switch["LEFT"] =	function() 
+	if p:GetX() > 0 and GetTile((p:GetX()),p:GetY()+1) == 0 then
+		p:Move(-1,0)
+	end
+	
+end
 switch["S"] =
 function()
 	print("Save")
 	local f = io.open("save.save", "w")
-	for y=1, 8 do
+	for y=1, mapSize do
     	local str = ""
-   			for x=1, 8 do
-       			str = str .. A[y][x]
-				if x < 8 then
+   			for x=1, mapSize do
+       			str = str .. map[y][x]
+				if x < mapSize then
 					str = str .. ","
 				end
     		end
@@ -91,7 +104,7 @@ function()
 	for line in f:lines() do
 		x = 1
 		for l in string.gmatch(line, "([^".. "," .."]+)") do
-			A[y][x] = l
+			map[y][x] = l
 			x = x + 1
 		end
 		y = y + 1
@@ -101,4 +114,12 @@ end
 
 function HandleKeyPress(key)
 	switch[key]()
+end
+
+function GetPlayerX()
+	return p:GetX()
+end
+
+function GetPlayerY()
+	return p:GetY()
 end

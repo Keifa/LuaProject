@@ -32,6 +32,9 @@
     <ClInclude Include="Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="script.lua">
@@ -46,5 +49,16 @@
     <None Include="window.lua">
       <Filter>Scripts</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="button.png">
+      <Filter>Source Files</Filter>
+    </Image>
+    <Image Include="player.png">
+      <Filter>Source Files</Filter>
+    </Image>
+    <Image Include="box.png">
+      <Filter>Source Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

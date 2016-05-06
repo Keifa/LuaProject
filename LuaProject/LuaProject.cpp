@@ -7,6 +7,7 @@
 #include "helper.h"
 #include "Window.h"
 #include <string>
+#include "Entity.h"
 
 const int TILE_SIZE = 64;
 int main()
@@ -14,10 +15,12 @@ int main()
 	//sf::RenderWindow window(sf::VideoMode(512, 512), "SFML works!");
 	
 	sf::RectangleShape shape(sf::Vector2f(TILE_SIZE, TILE_SIZE));
-	shape.setFillColor(sf::Color::Green);
+	shape.setFillColor(sf::Color::White);
 	shape.setOutlineColor(sf::Color::Black);
 	shape.setOutlineThickness(2);
+
 	
+
 	std::map<int, std::string> keyPressMap =
 	{
 		{ sf::Keyboard::Up,		"UP" },
@@ -45,7 +48,7 @@ int main()
 			lua_pop(L, 1);
 		}
 	}
-
+	RegisterEntity(L);
 	int error = luaL_loadfile(L, "map.lua") ||
 		lua_pcall(L, 0, 0, 0);
 
@@ -54,8 +57,13 @@ int main()
 		std::cerr << lua_tostring(L, -1) << std::endl;
 		lua_pop(L, 1);
 	}
+	
+
 
 	std::string tempStr = "";
+	int size = 0;
+	lua_getglobal(L, "mapSize");
+	size = lua_tointeger(L, -1);
 			
 	Window w("window.lua");
 	int counter = 0;
@@ -87,8 +95,8 @@ int main()
 				break;
 			case sf::Event::MouseButtonPressed:
 				lua_getglobal(L, "Clicked");
-				lua_pushinteger(L, event.mouseButton.x / 64 + 1);
-				lua_pushinteger(L, event.mouseButton.y / 64 + 1);
+				lua_pushinteger(L, event.mouseButton.x / TILE_SIZE + 1);
+				lua_pushinteger(L, event.mouseButton.y / TILE_SIZE + 1);
 				error = lua_pcall(L, 2, 0, 0);
 				if (error)
 				{
@@ -100,10 +108,16 @@ int main()
 		}
 		//window.clear();
 		//window.draw(shape);
-
-		for (int y = 0; y < 8; y++)
+		sf::Texture texture;
+		if (!texture.loadFromFile("ground.png"))
 		{
-			for (int x = 0; x < 8; x++)
+			throw std::runtime_error("Could not load image.png");
+		}
+
+		shape.setTexture(&texture);
+		for (int y = 0; y < size; y++)
+		{
+			for (int x = 0; x < size; x++)
 			{
 				shape.setPosition(TILE_SIZE * x, TILE_SIZE * y);
 
@@ -125,10 +139,10 @@ int main()
 					switch (x)
 					{
 					case 0:
-						shape.setFillColor(sf::Color::Blue);
+						shape.setFillColor(sf::Color::White);
 						break;
 					case 1:
-						shape.setFillColor(sf::Color::Green);
+						shape.setFillColor(sf::Color::Black);
 						break;
 					case 2:
 						shape.setFillColor(sf::Color::Red);
@@ -143,7 +157,36 @@ int main()
 				w.Draw(shape);
 			}
 		}
+		if (!texture.loadFromFile("Player.png"))
+		{
+			throw std::runtime_error("Could not load image.png");
+		}
 
+		shape.setTexture(&texture);
+
+		lua_getglobal(L, "GetPlayerX");
+		error = lua_pcall(L, 0, 1, 0);
+		if (error)
+		{
+			std::cerr << lua_tostring(L, -1) << std::endl;
+			lua_pop(L, 1);
+		}
+		int x = lua_tonumber(L, -1);
+		lua_pop(L, 1);
+
+		lua_getglobal(L, "GetPlayerY");
+		error = lua_pcall(L, 0, 1, 0);
+		if (error)
+		{
+			std::cerr << lua_tostring(L, -1) << std::endl;
+			lua_pop(L, 1);
+		}
+		int y = lua_tonumber(L, -1);
+		lua_pop(L, 1);
+
+		shape.setPosition(TILE_SIZE * x, TILE_SIZE * y);
+
+		w.Draw(shape);
 		w.Display();
 
 		counter += 1;

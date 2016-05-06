@@ -1,3 +1,3 @@
 windowTitle = "Game Tiltle"
-windowWidth = 512
-windowHeight = 512
+windowWidth = 640
+windowHeight = 640
