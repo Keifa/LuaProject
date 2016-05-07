@@ -47,7 +47,7 @@ int main()
 	}
 
 	int error = luaL_loadfile(L, "map.lua") ||
-		lua_pcall(L, 0, 0, 0);
+				lua_pcall(L, 0, 0, 0);
 
 	if (error)
 	{

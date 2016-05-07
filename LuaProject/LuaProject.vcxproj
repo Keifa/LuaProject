@@ -161,6 +161,7 @@
   <ItemGroup>
     <None Include="ghost.lua" />
     <None Include="map.lua" />
+    <None Include="save.save" />
     <None Include="script.lua" />
     <None Include="window.lua" />
   </ItemGroup>

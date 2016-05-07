@@ -1,10 +1,29 @@
+--PLAYER
+PLAYER = {}
+PLAYER["x"] = 1
+PLAYER["y"] = 1
+PLAYER["color"] = 2
 
+--BOX
+BOX = {}
+BOX["x"] = 4
+BOX["y"] = 4
+BOX["color"] = 3
+
+--WALL
+WALL = {}
+WALL["x"] = 0
+WALL["y"] = 0
+WALL["color"] = 2
+
+WALLS = {}
+
+--MAP/GRID
 A ={}
-
-A[1] = {3,0,0,0,0,0,0,0}
+A[1] = {2,0,0,0,0,0,0,0}
 A[2] = {0,0,0,0,0,0,0,0}
 A[3] = {0,0,0,0,0,0,0,0}
-A[4] = {0,0,0,0,0,0,0,0}
+A[4] = {0,0,0,3,0,0,0,0}
 A[5] = {0,0,0,0,0,0,0,0}
 A[6] = {0,0,0,0,0,0,0,0}
 A[7] = {0,0,0,0,0,0,0,0}
@@ -60,60 +79,97 @@ function Clicked(x,y)
 	A[y][x] = value
 end
 
-PLAYER = {}
-PLAYER["x"] = 1
-PLAYER["y"] = 1
-PLAYER["color"] = 3
+function CheckForBox(x, y)
+	local check = false
+	if A[y][x] == BOX.color then
+		check = true		
+	end
+	return check
+end
 
-function Move(x, y)
-	print("Move ", x, y)
-	A[y][x] = PLAYER.color
-	print(A[y][x])
+function CheckMove(dir, pos)
+	local check = false
+	local posAfter = pos + dir
+	if posAfter <= 8 and posAfter >= 1 then
+		check = true
+	end
+	return check
+end
+
+function MoveBox(x, y)
+	local xCheck = false
+	local yCheck = false
+	if CheckMove(x, BOX.x) then
+		BOX.x = BOX.x + x
+		xCheck = true
+	end
+	if CheckMove(y, BOX.y) then
+		BOX.y = BOX.y + y
+		yCheck = true
+	end
+	if xCheck or yCheck then
+		A[BOX.y][BOX.x] = BOX.color
+	end
+	return xCheck, yCheck
 end
 
 function ResetTile (x, y)
 	A[y][x] = 0
 end
 
+function MovePlayer(x, y)
+	xCheck = false
+	yCheck = false
+	if CheckForBox(PLAYER.x + x, PLAYER.y + y) then 
+		
+		xCheck, yCheck = MoveBox(x, y)
+		if xCheck then	
+			if CheckMove(x, PLAYER.x) then
+				PLAYER.x = PLAYER.x + x
+			end
+		end
+		if yCheck then
+			if CheckMove(y, PLAYER.y) then
+				PLAYER.y = PLAYER.y + y
+			end
+		end
+
+		if xCheck or yCheck then
+			ResetTile(PLAYER.x - x, PLAYER.y - y)
+			A[PLAYER.y][PLAYER.x] = PLAYER.color
+		end
+	else
+		if CheckMove(x, PLAYER.x) then
+			PLAYER.x = PLAYER.x + x
+		end
+		if CheckMove(y, PLAYER.y) then
+			PLAYER.y = PLAYER.y + y
+		end
+		
+		ResetTile(PLAYER.x - x, PLAYER.y - y)
+		A[PLAYER.y][PLAYER.x] = PLAYER.color
+	end
+end
+
 local switch = {}
 switch["UP"] =		
 function() 
-	print("UP")
-	if PLAYER.y > 1 then
-		ResetTile(PLAYER.x, PLAYER.y)
-		PLAYER.y = PLAYER.y - 1
-		Move(PLAYER.x, PLAYER.y)
-	end
+	MovePlayer(0, -1)
 end
 
 switch["DOWN"] =	
 function() 
-	print("DOWN")
-	if PLAYER.y < 8 then
-		ResetTile(PLAYER.x, PLAYER.y)
-		PLAYER.y = PLAYER.y + 1
-		Move(PLAYER.x, PLAYER.y)
-	end
+	MovePlayer(0, 1)
 end
 
 switch["RIGHT"] =	
 function() 
-	print("RIGHT")
-	if PLAYER.x < 8 then
-		ResetTile(PLAYER.x, PLAYER.y)
-		PLAYER.x = PLAYER.x + 1
-		Move(PLAYER.x, PLAYER.y)
-	end
+	MovePlayer(1, 0)
 end
 
 switch["LEFT"] =
 function() 
-	print("LEFT")
-	if PLAYER.x > 1 then
-		ResetTile(PLAYER.x, PLAYER.y)
-		PLAYER.x = PLAYER.x - 1
-		Move(PLAYER.x, PLAYER.y)
-	end
+	MovePlayer(-1, 0)
 end
 
 switch["S"] =
@@ -143,6 +199,11 @@ function()
 		x = 1
 		for l in string.gmatch(line, "([^".. "," .."]+)") do
 			A[y][x] = l
+			if A[y][x] == tostring(PLAYER.color) then
+				PLAYER.x = x
+				PLAYER.y = y
+				MovePlayer(x, y)
+			end
 			x = x + 1
 		end
 		y = y + 1
