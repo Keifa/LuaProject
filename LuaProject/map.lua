@@ -49,12 +49,11 @@ end
 
 function CheckWalls(x, y)
 	local check = false
-	print(#WALLS)
 	if #WALLS > 0 then
 		for i = 1, #WALLS do
-			--WALLS[i]:Print()
 			if WALLS[i]:CheckCollision(x, y) then
 				check = true
+				i = #WALLS
 			end
 		end
 	end
@@ -104,6 +103,9 @@ function MovePlayer(x, y)
 	yCheck = false
 	if CheckForBox(PLAYER.x + x, PLAYER.y + y) then 
 		
+		if not CheckWalls(PLAYER.x + x, PLAYER.y + y) then
+			print("NOT")
+		end
 		xCheck, yCheck = MoveBox(x, y)
 		if xCheck then	
 			if CheckMove(x, PLAYER.x) then
@@ -132,7 +134,7 @@ function MovePlayer(x, y)
 		A[PLAYER.y][PLAYER.x] = PLAYER.color
 	end
 	if CheckWalls(PLAYER.x, PLAYER.y) then
-		print("WALL")
+		
 	end
 end
 
@@ -181,6 +183,7 @@ function AddEntity(x, y)
 end
 
 function Load()
+	WALLS = {}
 	local f = io.open("save.save", "r")
 	y = 1
 	for line in f:lines() do
