@@ -1,5 +1,11 @@
 local adam = Player.New("adam")
 
+local wallTest = Wall.New(1,1)
+wallTest:Print()
+wallTest:SetPosition(2, 2)
+wallTest:Print()
+print(wallTest:GetColor())
+
 adam:SetPosition(100,50)
 
 adam:Print()

@@ -6,7 +6,9 @@
 #include "Player.h"
 #include "helper.h"
 #include "Window.h"
+#include "Wall.h"
 #include <string>
+#include "Util.h"
 
 const int TILE_SIZE = 64;
 int main()
@@ -17,16 +19,6 @@ int main()
 	shape.setFillColor(sf::Color::Green);
 	shape.setOutlineColor(sf::Color::Black);
 	shape.setOutlineThickness(2);
-	
-	std::map<int, std::string> keyPressMap =
-	{
-		{ sf::Keyboard::Up,		"UP" },
-		{ sf::Keyboard::Down,	"DOWN" },
-		{ sf::Keyboard::Right,	"RIGHT" },
-		{ sf::Keyboard::Left,	"LEFT" },
-		{ sf::Keyboard::S,		"S" },
-		{ sf::Keyboard::R,		"R" }
-	};
 
 	lua_State* L = luaL_newstate();
 
@@ -35,9 +27,10 @@ int main()
 		luaL_openlibs(L);
 
 		RegisterPlayer(L);
+		RegisterWall(L);
 
 		int error = luaL_loadfile(L, "script.lua") ||
-			lua_pcall(L, 0, 0, 0);
+					lua_pcall(L, 0, 0, 0);
 
 		if (error)
 		{
@@ -48,7 +41,15 @@ int main()
 
 	int error = luaL_loadfile(L, "map.lua") ||
 				lua_pcall(L, 0, 0, 0);
+	if (error)
+	{
+		std::cerr << lua_tostring(L, -1) << std::endl;
+		lua_pop(L, 1);
+	}
 
+	lua_getglobal(L, "HandleKeyPress");
+	lua_pushstring(L, "R");
+	error = lua_pcall(L, 1, 0, 0);
 	if (error)
 	{
 		std::cerr << lua_tostring(L, -1) << std::endl;
@@ -124,17 +125,23 @@ int main()
 
 					switch (x)
 					{
-					case 0:
-						shape.setFillColor(sf::Color::Blue);
+					case WHITE:
+						shape.setFillColor(sf::Color::White);
 						break;
-					case 1:
+					case BLACK:
+						shape.setFillColor(sf::Color::Black);
+						break;
+					case GREEN:
 						shape.setFillColor(sf::Color::Green);
 						break;
-					case 2:
+					case RED:
 						shape.setFillColor(sf::Color::Red);
 						break;
-					case 3:
+					case YELLOW:
 						shape.setFillColor(sf::Color::Yellow);
+						break;
+					case BLUE:
+						shape.setFillColor(sf::Color::Blue);
 						break;
 					default:
 						break;

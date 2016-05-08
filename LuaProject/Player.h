@@ -2,12 +2,14 @@
 #include <iostream>
 #include <string>
 #include "lua.hpp"
+
 class Player
 {
 private:
 	std::string _name;
 	int _x;
 	int _y;
+
 public:
 	Player(const std::string name)
 	{
