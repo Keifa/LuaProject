@@ -42,42 +42,50 @@ function ValidMove(dir, currentPos)
 	return true
 end
 
+function MoveY(dir)
+	if ValidMove(dir, p:GetY()) and GetTile(p:GetX(), p:GetY() + dir) == 0 then
+		if b:CollisionCheck(p:GetX(), p:GetY() + dir) then
+			if ValidMove(dir, b:GetY()) and GetTile(b:GetX(), b:GetY() + dir) == 0 then
+				b:Move(0, dir)
+				p:Move(0, dir)
+			end
+		else
+			p:Move(0, dir)
+		end
+	end
+end
+
+function MoveX(dir)
+	if ValidMove(dir, p:GetX()) and GetTile(p:GetX() + dir, p:GetY()) == 0 then
+		if b:CollisionCheck(p:GetX() + dir, p:GetY()) then
+			if ValidMove(dir, b:GetX()) and GetTile(b:GetX() + dir, b:GetY()) == 0 then
+				b:Move(dir, 0)
+				p:Move(dir, 0)
+			end
+		else
+			p:Move(dir, 0)
+		end
+	end
+end
+
+
 local switch = {}
 switch["UP"] =		function() 
-	if ValidMove(-1, p:GetY()) and GetTile(p:GetX(), p:GetY() - 1) == 0 then
-		p:Move(0,-1)
-		if p:CollisionCheck(b:GetX(), b:GetY()) then
-			b:Move(0, -1)
-		 end
-	end
+	MoveY(-1)
 end
 
 switch["DOWN"] =	function() 
-	if ValidMove(1, p:GetY()) and GetTile(p:GetX(),(p:GetY() + 1)) == 0 then
-		p:Move(0,1)
-		if p:CollisionCheck(b:GetX(), b:GetY()) then
-			b:Move(0, 1)
-		 end
-	end
+	MoveY(1)
 end
 
 switch["RIGHT"] =	function() 
-	if ValidMove(1, p:GetX()) and GetTile((p:GetX() + 1), p:GetY()) == 0 then
-		p:Move(1,0)
-		if p:CollisionCheck(b:GetX(), b:GetY()) then
-			b:Move(1, 0)
-		 end
-	end
+	MoveX(1)
 end
 
 switch["LEFT"] =	function() 
-	if ValidMove(-1, p:GetX()) and GetTile((p:GetX() - 1),p:GetY()) == 0 then
-		p:Move(-1,0)
-		if p:CollisionCheck(b:GetX(), b:GetY()) then
-			b:Move(-1, 0)
-		 end
-	end 
+	MoveX(-1)
 end
+
 switch["S"] =
 function()
 	print("Save")
