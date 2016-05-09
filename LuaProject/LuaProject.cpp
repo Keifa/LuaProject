@@ -9,6 +9,9 @@
 #include <string>
 #include "Entity.h"
 
+void DrawPlayer(Window& w, sf::Shape& shape, sf::Texture& texture, lua_State* L);
+void DrawBox(Window& w, sf::Shape& shape, sf::Texture& texture, lua_State* L);
+
 const int TILE_SIZE = 64;
 int main()
 {
@@ -18,6 +21,14 @@ int main()
 	shape.setFillColor(sf::Color::White);
 	shape.setOutlineColor(sf::Color::Black);
 	shape.setOutlineThickness(2);
+
+	sf::Texture playerTexture;
+	if (!playerTexture.loadFromFile("Player.png"))
+		throw std::runtime_error("Could not load image.png");
+
+	sf::Texture boxTexture;
+	if (!boxTexture.loadFromFile("Box.png"))
+		throw std::runtime_error("Could not load image.png");
 
 	std::map<int, std::string> keyPressMap =
 	{
@@ -155,36 +166,8 @@ int main()
 				w.Draw(shape);
 			}
 		}
-		if (!texture.loadFromFile("Player.png"))
-		{
-			throw std::runtime_error("Could not load image.png");
-		}
-
-		shape.setTexture(&texture);
-
-		lua_getglobal(L, "GetPlayerX");
-		error = lua_pcall(L, 0, 1, 0);
-		if (error)
-		{
-			std::cerr << lua_tostring(L, -1) << std::endl;
-			lua_pop(L, 1);
-		}
-		int x = lua_tonumber(L, -1);
-		lua_pop(L, 1);
-
-		lua_getglobal(L, "GetPlayerY");
-		error = lua_pcall(L, 0, 1, 0);
-		if (error)
-		{
-			std::cerr << lua_tostring(L, -1) << std::endl;
-			lua_pop(L, 1);
-		}
-		int y = lua_tonumber(L, -1);
-		lua_pop(L, 1);
-
-		shape.setPosition(TILE_SIZE * (x - 1), TILE_SIZE * (y - 1));
-
-		w.Draw(shape);
+		DrawPlayer(w, shape, playerTexture, L);
+		DrawBox(w, shape, boxTexture, L);
 		w.Display();
 
 		counter += 1;
@@ -192,4 +175,59 @@ int main()
 
 	lua_close(L);
 	return 0;
+}
+
+void DrawPlayer(Window& w, sf::Shape& shape, sf::Texture& texture, lua_State* L)
+{
+	shape.setTexture(&texture);
+
+	lua_getglobal(L, "GetPlayerX");
+	int error = lua_pcall(L, 0, 1, 0);
+	if (error)
+	{
+		std::cerr << lua_tostring(L, -1) << std::endl;
+		lua_pop(L, 1);
+	}
+	int x = lua_tonumber(L, -1);
+	lua_pop(L, 1);
+
+	lua_getglobal(L, "GetPlayerY");
+	error = lua_pcall(L, 0, 1, 0);
+	if (error)
+	{
+		std::cerr << lua_tostring(L, -1) << std::endl;
+		lua_pop(L, 1);
+	}
+	int y = lua_tonumber(L, -1);
+	lua_pop(L, 1);
+
+	shape.setPosition(TILE_SIZE * (x - 1), TILE_SIZE * (y - 1));
+	w.Draw(shape);
+}
+
+void DrawBox(Window& w, sf::Shape& shape, sf::Texture& texture, lua_State* L)
+{
+	shape.setTexture(&texture);
+	lua_getglobal(L, "GetBoxX");
+	int error = lua_pcall(L, 0, 1, 0);
+	if (error)
+	{
+		std::cerr << lua_tostring(L, -1) << std::endl;
+		lua_pop(L, 1);
+	}
+	int x = lua_tonumber(L, -1);
+	lua_pop(L, 1);
+
+	lua_getglobal(L, "GetBoxY");
+	error = lua_pcall(L, 0, 1, 0);
+	if (error)
+	{
+		std::cerr << lua_tostring(L, -1) << std::endl;
+		lua_pop(L, 1);
+	}
+	int y = lua_tonumber(L, -1);
+	lua_pop(L, 1);
+
+	shape.setPosition(TILE_SIZE * (x - 1), TILE_SIZE * (y - 1));
+	w.Draw(shape);
 }

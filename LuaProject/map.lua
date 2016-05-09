@@ -13,45 +13,20 @@ end
 
 --Player
 local p = Entity.New("player.png")
+local pID = 5
 p:SetPosition(1,1)
+
+--Box
+local b = Entity.New("box.png")
+local bID = 6
+b:SetPosition(5,5)
+
+--Wall
+local wID = 1
 
 function GetTile(x,y)
 	return map[y][x]
 end
-
---[[
-function Save()
-	print("Save")
-	local f = io.open("save.save", "w")
-	for y=1, mapSize do
-    	local str = ""
-   			for x=1, mapSize do
-       			str = str .. map[y][x]
-				if x < mapSize then
-					str = str .. ","
-				end
-    		end
-		str = str .. "\n"
-    	f:write(str)
-	end
-	io.close(f)
-end
-
-function Load()
-	print("Load")
-	local f = io.open("save.save", "r")
-	y = 1
-	for line in f:lines() do
-		x = 1
-		for l in string.gmatch(line, "([^".. "," .."]+)") do
-			map[y][x] = l
-			x = x + 1
-		end
-		y = y + 1
-	end
-	io.close(f)
-end
---]]
 
 function Clicked(x,y)
 	local value = map[y][x]
@@ -59,30 +34,55 @@ function Clicked(x,y)
 	map[y][x] = value
 end
 
+function ValidMove(dir, currentPos)
+	local posAfter = currentPos + dir
+	if posAfter <= 0 or posAfter > mapSize then
+		do return false end
+	end
+	return true
+end
+
 local switch = {}
 switch["UP"] =		function() 
-	if p:GetY() > 0 and GetTile(p:GetX()+1,(p:GetY())) == 0 then
+	if ValidMove(-1, p:GetY()) and GetTile(p:GetX(), p:GetY() - 1) == 0 then
 		p:Move(0,-1)
+		if p:CollisionCheck(b:GetX(), b:GetY()) then
+			b:Move(0, -1)
+		 end
 	end
 end
+
 switch["DOWN"] =	function() 
-	if p:GetY() < mapSize and GetTile(p:GetX()+1,(p:GetY() + 2)) == 0 then
+	if ValidMove(1, p:GetY()) and GetTile(p:GetX(),(p:GetY() + 1)) == 0 then
 		p:Move(0,1)
+		if p:CollisionCheck(b:GetX(), b:GetY()) then
+			b:Move(0, 1)
+		 end
 	end
 end
+
 switch["RIGHT"] =	function() 
-	if p:GetX() < mapSize and GetTile((p:GetX() + 2), p:GetY()+1) == 0 then
+	if ValidMove(1, p:GetX()) and GetTile((p:GetX() + 1), p:GetY()) == 0 then
 		p:Move(1,0)
+		if p:CollisionCheck(b:GetX(), b:GetY()) then
+			b:Move(1, 0)
+		 end
 	end
 end
+
 switch["LEFT"] =	function() 
-	if p:GetX() > 0 and GetTile((p:GetX()),p:GetY()+1) == 0 then
+	if ValidMove(-1, p:GetX()) and GetTile((p:GetX() - 1),p:GetY()) == 0 then
 		p:Move(-1,0)
-	end
+		if p:CollisionCheck(b:GetX(), b:GetY()) then
+			b:Move(-1, 0)
+		 end
+	end 
 end
 switch["S"] =
 function()
 	print("Save")
+	map[p:GetY()][p:GetX()] = pID
+	map[b:GetY()][b:GetX()] = bID
 	local f = io.open("save.save", "w")
 	for y=1, mapSize do
     	local str = ""
@@ -105,8 +105,15 @@ function()
 	y = 1
 	for line in f:lines() do
 		x = 1
-		for l in string.gmatch(line, "([^".. "," .."]+)") do
-			map[y][x] = l
+		for l in string.gmatch(line, "([^".. "," .."]+)") do			
+			map[y][x] = tonumber(l)
+			if map[y][x] == pID then
+				p:SetPosition(x, y)
+				print("Player: " .. p:GetX() .. " ".. p:GetY())
+			elseif map[y][x] == bID then
+				b:SetPosition(x, y)
+				print("Box: " .. b:GetX() .. " ".. b:GetY())
+			end
 			x = x + 1
 		end
 		y = y + 1
@@ -124,4 +131,12 @@ end
 
 function GetPlayerY()
 	return p:GetY()
+end
+
+function GetBoxX()
+	return b:GetX()
+end
+
+function GetBoxY()
+	return b:GetY()
 end
