@@ -19,8 +19,6 @@ int main()
 	shape.setOutlineColor(sf::Color::Black);
 	shape.setOutlineThickness(2);
 
-	
-
 	std::map<int, std::string> keyPressMap =
 	{
 		{ sf::Keyboard::Up,		"UP" },
@@ -184,7 +182,7 @@ int main()
 		int y = lua_tonumber(L, -1);
 		lua_pop(L, 1);
 
-		shape.setPosition(TILE_SIZE * x, TILE_SIZE * y);
+		shape.setPosition(TILE_SIZE * (x - 1), TILE_SIZE * (y - 1));
 
 		w.Draw(shape);
 		w.Display();

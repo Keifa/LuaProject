@@ -40,6 +40,14 @@ public:
 	{
 		return _y;
 	}
+
+	bool CollisionCheck(int x, int y)
+	{
+		bool check = false;
+		if (_x == x && _y == y)
+			check = true;
+		return check;
+	}
 };
 
 int entity_create(lua_State* ls)
@@ -110,6 +118,16 @@ int entity_setPosition(lua_State* ls)
 {
 	Entity* entity = l_CheckEntity(ls, 1);
 	entity->SetPosition(lua_tointeger(ls, 2), lua_tointeger(ls, 3));
+	return 0;
+}
+
+int entity_collisionCheck(lua_State* ls)
+{
+	Entity* entity = l_CheckEntity(ls, 1);
+	/*if(entity->CollisionCheck(lua_tointeger(ls, 2), lua_tointeger(ls, 3)))
+	
+	else
+*/
 	return 0;
 }
 

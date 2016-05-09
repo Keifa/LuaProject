@@ -1,11 +1,8 @@
 
 local entitys = {}
 
-local p = Entity.New("player.png")
-p:SetPosition(2,2)
-
+--Map
 mapSize = 10
-
 local map = {}
 for x=1, mapSize do
     map[x] = {}
@@ -14,10 +11,15 @@ for x=1, mapSize do
     end
 end
 
+--Player
+local p = Entity.New("player.png")
+p:SetPosition(1,1)
+
 function GetTile(x,y)
 	return map[y][x]
 end
 
+--[[
 function Save()
 	print("Save")
 	local f = io.open("save.save", "w")
@@ -49,6 +51,7 @@ function Load()
 	end
 	io.close(f)
 end
+--]]
 
 function Clicked(x,y)
 	local value = map[y][x]
@@ -76,7 +79,6 @@ switch["LEFT"] =	function()
 	if p:GetX() > 0 and GetTile((p:GetX()),p:GetY()+1) == 0 then
 		p:Move(-1,0)
 	end
-	
 end
 switch["S"] =
 function()
