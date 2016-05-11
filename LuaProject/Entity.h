@@ -40,6 +40,14 @@ public:
 	{
 		return _y;
 	}
+
+	bool CollisionCheck(int x, int y)
+	{
+		bool check = false;
+		if (_x == x && _y == y)
+			check = true;
+		return check;
+	}
 };
 
 int entity_create(lua_State* ls)
@@ -113,6 +121,16 @@ int entity_setPosition(lua_State* ls)
 	return 0;
 }
 
+int entity_collisionCheck(lua_State* ls)
+{
+	bool check = false;
+	Entity* entity = l_CheckEntity(ls, 1);
+	if (entity->CollisionCheck(lua_tointeger(ls, 2), lua_tointeger(ls, 3)))
+		check = true;
+	lua_pushboolean(ls, check);
+	return 1;
+}
+
 void RegisterEntity(lua_State* ls)
 {
 	luaL_newmetatable(ls, "MetaEntity");
@@ -124,6 +142,7 @@ void RegisterEntity(lua_State* ls)
 		{ "Move",			entity_move},		
 		{ "GetX",			entity_getX },
 		{ "GetY",			entity_getY },
+		{ "CollisionCheck",	entity_collisionCheck },
 		{ "__gc",			entity_destroy },
 		{ NULL, NULL }
 	};

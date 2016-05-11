@@ -9,6 +9,8 @@
 #include <string>
 #include "Entity.h"
 
+void InitTextures(sf::Texture& player, sf::Texture& box, sf::Texture& ground, sf::Texture& button);
+
 const int TILE_SIZE = 64;
 int main()
 {
@@ -19,7 +21,22 @@ int main()
 	shape.setOutlineColor(sf::Color::Black);
 	shape.setOutlineThickness(2);
 
-	
+	sf::Texture playerTexture, boxTexture, groundTexture, buttonTexture;
+	InitTextures(playerTexture, boxTexture, groundTexture, buttonTexture);
+
+	enum TileTypes
+	{
+		NORMAL_GROUND,
+		WALL,
+		RED,
+		YELLOW,
+		BLUE,
+		PLAYER,
+		BOX,
+		BUTTON,
+
+		NUM_TILETYPES
+	};
 
 	std::map<int, std::string> keyPressMap =
 	{
@@ -33,7 +50,7 @@ int main()
 
 	lua_State* L = luaL_newstate();
 
-	if (L)
+	/*if (L)
 	{
 		luaL_openlibs(L);
 
@@ -47,7 +64,9 @@ int main()
 			std::cerr << lua_tostring(L, -1) << std::endl;
 			lua_pop(L, 1);
 		}
-	}
+	}*/
+	luaL_openlibs(L);
+
 	RegisterEntity(L);
 	int error = luaL_loadfile(L, "map.lua") ||
 		lua_pcall(L, 0, 0, 0);
@@ -58,8 +77,6 @@ int main()
 		lua_pop(L, 1);
 	}
 	
-
-
 	std::string tempStr = "";
 	int size = 0;
 	lua_getglobal(L, "mapSize");
@@ -108,13 +125,7 @@ int main()
 		}
 		//window.clear();
 		//window.draw(shape);
-		sf::Texture texture;
-		if (!texture.loadFromFile("ground.png"))
-		{
-			throw std::runtime_error("Could not load image.png");
-		}
 
-		shape.setTexture(&texture);
 		for (int y = 0; y < size; y++)
 		{
 			for (int x = 0; x < size; x++)
@@ -138,60 +149,96 @@ int main()
 
 					switch (x)
 					{
-					case 0:
+					case NORMAL_GROUND:
+						shape.setTexture(&groundTexture);
 						shape.setFillColor(sf::Color::White);
 						break;
-					case 1:
+					case WALL:
+						shape.setTexture(&groundTexture);
 						shape.setFillColor(sf::Color::Black);
 						break;
-					case 2:
+					case RED:
+						shape.setTexture(&groundTexture);
 						shape.setFillColor(sf::Color::Red);
 						break;
-					case 3:
+					case YELLOW:
+						shape.setTexture(&groundTexture);
 						shape.setFillColor(sf::Color::Yellow);
 						break;
+					case BLUE:
+						shape.setTexture(&groundTexture);
+						shape.setFillColor(sf::Color::Blue);
+						break;
+					case PLAYER:
+						shape.setTexture(&playerTexture);
+						shape.setFillColor(sf::Color::White);
+						break;
+					case BOX:
+						shape.setTexture(&boxTexture);
+						shape.setFillColor(sf::Color::White);
+						break;
+					case BUTTON:
+						shape.setTexture(&buttonTexture);
+						shape.setFillColor(sf::Color::White);
+						break;
 					default:
+						std::cout << "[C++] ERROR! UNVALID TILE TYPE!\n";
 						break;
 					}
 				}
 				w.Draw(shape);
 			}
 		}
-		if (!texture.loadFromFile("Player.png"))
-		{
-			throw std::runtime_error("Could not load image.png");
-		}
-
-		shape.setTexture(&texture);
-
-		lua_getglobal(L, "GetPlayerX");
-		error = lua_pcall(L, 0, 1, 0);
-		if (error)
-		{
-			std::cerr << lua_tostring(L, -1) << std::endl;
-			lua_pop(L, 1);
-		}
-		int x = lua_tonumber(L, -1);
-		lua_pop(L, 1);
-
-		lua_getglobal(L, "GetPlayerY");
-		error = lua_pcall(L, 0, 1, 0);
-		if (error)
-		{
-			std::cerr << lua_tostring(L, -1) << std::endl;
-			lua_pop(L, 1);
-		}
-		int y = lua_tonumber(L, -1);
-		lua_pop(L, 1);
-
-		shape.setPosition(TILE_SIZE * x, TILE_SIZE * y);
-
-		w.Draw(shape);
 		w.Display();
-
 		counter += 1;
 	}
 
 	lua_close(L);
 	return 0;
+}
+
+void DrawPlayer(Window& w, sf::Shape& shape, sf::Texture& texture, lua_State* L, int x, int y)
+{
+	shape.setTexture(&texture);
+	shape.setPosition(TILE_SIZE * (x - 1), TILE_SIZE * (y - 1));
+	//w.Draw(shape);
+}
+
+void DrawBox(Window& w, sf::Shape& shape, sf::Texture& texture, lua_State* L)
+{
+	shape.setTexture(&texture);
+	lua_getglobal(L, "GetBoxX");
+	int error = lua_pcall(L, 0, 1, 0);
+	if (error)
+	{
+		std::cerr << lua_tostring(L, -1) << std::endl;
+		lua_pop(L, 1);
+	}
+	int x = lua_tonumber(L, -1);
+	lua_pop(L, 1);
+
+	lua_getglobal(L, "GetBoxY");
+	error = lua_pcall(L, 0, 1, 0);
+	if (error)
+	{
+		std::cerr << lua_tostring(L, -1) << std::endl;
+		lua_pop(L, 1);
+	}
+	int y = lua_tonumber(L, -1);
+	lua_pop(L, 1);
+
+	shape.setPosition(TILE_SIZE * (x - 1), TILE_SIZE * (y - 1));
+	w.Draw(shape);
+}
+
+void InitTextures(sf::Texture& player, sf::Texture& box, sf::Texture& ground, sf::Texture& button)
+{
+	if (!player.loadFromFile("Player.png"))
+		throw std::runtime_error("Could not load image.png");
+	if (!box.loadFromFile("Box.png"))
+		throw std::runtime_error("Could not load image.png");
+	if (!ground.loadFromFile("ground.png"))
+		throw std::runtime_error("Could not load image.png");
+	if (!button.loadFromFile("button.png"))
+		throw std::runtime_error("Could not load image.png");
 }
