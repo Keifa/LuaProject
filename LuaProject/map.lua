@@ -1,4 +1,6 @@
 
+local gameOver = false
+
 local entitys = {}
 
 --Map
@@ -15,11 +17,35 @@ end
 local p = Entity.New("player.png")
 local pID = 5
 p:SetPosition(1,1)
+map[p:GetY()][p:GetX()] = pID
+
+function MovePlayer(xDir, yDir)
+	map[p:GetY()][p:GetX()] = 0
+	p:Move(xDir, yDir)
+	map[p:GetY()][p:GetX()] = pID
+end
+
+--Goal
+local g = Entity.New("button.png")
+local gID = 7
+g:SetPosition(mapSize, mapSize)
+map[g:GetY()][g:GetX()] = bID
 
 --Box
 local b = Entity.New("box.png")
 local bID = 6
 b:SetPosition(5,5)
+map[b:GetY()][b:GetX()] = bID
+
+function MoveBox(xDir, yDir)
+	map[b:GetY()][b:GetX()] = 0
+	b:Move(xDir, yDir)
+	if g:CollisionCheck(b:GetX(), b:GetY()) then
+		gameOver = true
+		print(gameOver)
+	end
+	map[b:GetY()][b:GetX()] = bID
+end
 
 --Wall
 local wID = 1
@@ -43,31 +69,38 @@ function ValidMove(dir, currentPos)
 end
 
 function MoveY(dir)
-	if ValidMove(dir, p:GetY()) and GetTile(p:GetX(), p:GetY() + dir) == 0 then
+	-- if player pos is inside map and if the tile is walkable
+	if ValidMove(dir, p:GetY()) and GetTile(p:GetX(), p:GetY() + dir) ~= wID then
+		-- Check if collision with box
 		if b:CollisionCheck(p:GetX(), p:GetY() + dir) then
-			if ValidMove(dir, b:GetY()) and GetTile(b:GetX(), b:GetY() + dir) == 0 then
-				b:Move(0, dir)
-				p:Move(0, dir)
+			--  Check if box pos is inside map and if the tile is walkable
+			if ValidMove(dir, b:GetY()) and GetTile(b:GetX(), b:GetY() + dir) ~= wID then
+				MoveBox(0, dir)
+				MovePlayer(0, dir)
 			end
+		-- if no collision with box -> move
 		else
-			p:Move(0, dir)
+			MovePlayer(0, dir)
 		end
 	end
 end
 
 function MoveX(dir)
-	if ValidMove(dir, p:GetX()) and GetTile(p:GetX() + dir, p:GetY()) == 0 then
+	--Check if pos is inside map and if the tile is walkable
+	if ValidMove(dir, p:GetX()) and GetTile(p:GetX() + dir, p:GetY()) ~= wID then
+		-- Check if collision with box
 		if b:CollisionCheck(p:GetX() + dir, p:GetY()) then
-			if ValidMove(dir, b:GetX()) and GetTile(b:GetX() + dir, b:GetY()) == 0 then
-				b:Move(dir, 0)
-				p:Move(dir, 0)
+			--  Check if box pos is inside map and if the tile is walkable
+			if ValidMove(dir, b:GetX()) and GetTile(b:GetX() + dir, b:GetY()) ~= wID then
+				MoveBox(dir, 0)
+				MovePlayer(dir, 0)
 			end
+		-- if no collision with box -> move
 		else
-			p:Move(dir, 0)
+			MovePlayer(dir, 0)
 		end
 	end
 end
-
 
 local switch = {}
 switch["UP"] =		function() 
@@ -89,8 +122,7 @@ end
 switch["S"] =
 function()
 	print("Save")
-	map[p:GetY()][p:GetX()] = pID
-	map[b:GetY()][b:GetX()] = bID
+	map[g:GetY()][g:GetX()] = gID
 	local f = io.open("save.save", "w")
 	for y=1, mapSize do
     	local str = ""
@@ -121,6 +153,9 @@ function()
 			elseif map[y][x] == bID then
 				b:SetPosition(x, y)
 				print("Box: " .. b:GetX() .. " ".. b:GetY())
+			elseif map[y][x] == gID then
+				g:SetPosition(x, y)
+				print("Goal: " .. b:GetX() .. " ".. b:GetY())
 			end
 			x = x + 1
 		end
