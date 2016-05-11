@@ -17,25 +17,20 @@ end
 local p = Entity.New("player.png")
 local pID = 5
 p:SetPosition(1,1)
-map[p:GetY()][p:GetX()] = pID
 
 function MovePlayer(xDir, yDir)
-	map[p:GetY()][p:GetX()] = 0
 	p:Move(xDir, yDir)
-	map[p:GetY()][p:GetX()] = pID
 end
 
 --Goal
 local g = Entity.New("button.png")
 local gID = 7
-g:SetPosition(mapSize, mapSize)
-map[g:GetY()][g:GetX()] = bID
+g:SetPosition(mapSize/2, mapSize/2)
 
 --Box
 local b = Entity.New("box.png")
 local bID = 6
-b:SetPosition(5,5)
-map[b:GetY()][b:GetX()] = bID
+b:SetPosition(3,3)
 
 function MoveBox(xDir, yDir)
 	map[b:GetY()][b:GetX()] = 0
@@ -44,7 +39,6 @@ function MoveBox(xDir, yDir)
 		gameOver = true
 		print(gameOver)
 	end
-	map[b:GetY()][b:GetX()] = bID
 end
 
 --Wall
@@ -122,8 +116,19 @@ end
 switch["S"] =
 function()
 	print("Save")
-	map[g:GetY()][g:GetX()] = gID
 	local f = io.open("save.save", "w")
+
+	local string = ""
+	--Player save
+	string = "[player]," .. p:GetTexture() .. "," .. p:GetX() .. "," .. p:GetY() .. "\n"
+	f:write(string)
+	--Box save
+	string = "[box]," .. b:GetTexture() .. "," .. b:GetX() .. "," .. b:GetY() .. "\n"
+	f:write(string)
+	--Button save
+	string = "[button]," .. g:GetTexture() .. "," .. g:GetX() .. "," .. g:GetY() .. "\n"
+	f:write(string)
+
 	for y=1, mapSize do
     	local str = ""
    			for x=1, mapSize do
@@ -145,20 +150,33 @@ function()
 	y = 1
 	for line in f:lines() do
 		x = 1
-		for l in string.gmatch(line, "([^".. "," .."]+)") do			
-			map[y][x] = tonumber(l)
-			if map[y][x] == pID then
-				p:SetPosition(x, y)
-				print("Player: " .. p:GetX() .. " ".. p:GetY())
-			elseif map[y][x] == bID then
-				b:SetPosition(x, y)
-				print("Box: " .. b:GetX() .. " ".. b:GetY())
-			elseif map[y][x] == gID then
-				g:SetPosition(x, y)
-				print("Goal: " .. b:GetX() .. " ".. b:GetY())
-			end
-			x = x + 1
+
+		
+		t = {}
+		k = 1
+		for v in string.gmatch(line, "([^".. "," .."]+)") do
+			t[k] = v
+			
+			k = k +1
 		end
+
+		if t[1] == "[player]" then
+			p:SetTexture(t[2])
+			p:SetPosition(t[3],t[4])
+		end
+		if t[1] == "[box]" then
+			b:SetTexture(t[2])
+			b:SetPosition(t[3],t[4])
+		end
+		if t[1] == "[button]" then
+			g:SetTexture(t[2])
+			g:SetPosition(t[3],t[4])
+		end
+
+		--for l in string.gmatch(line, "([^".. "," .."]+)") do			
+			--map[y][x] = tonumber(l)
+			--x = x + 1
+		--end
 		y = y + 1
 	end
 	io.close(f)
@@ -182,4 +200,14 @@ end
 
 function GetBoxY()
 	return b:GetY()
+end
+
+function GetPlayer()
+	return p:GetTexture(),p:GetX()-1,p:GetY()-1
+end
+function GetBox()
+	return b:GetTexture(),b:GetX(),b:GetY()
+end
+function GetButton()
+	return g:GetTexture(),g:GetX(),g:GetY()
 end

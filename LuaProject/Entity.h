@@ -24,6 +24,10 @@ public:
 		_y = y;
 		std::cout << "[c++] Set Position\n";
 	}
+	void SetTextureString(std::string texture)
+	{
+		this->_texture = texture;
+	}
 
 	void Move(int x, int y)
 	{
@@ -130,6 +134,21 @@ int entity_collisionCheck(lua_State* ls)
 	lua_pushboolean(ls, check);
 	return 1;
 }
+int entity_getTextureString(lua_State* ls)
+{
+	Entity* entity = l_CheckEntity(ls, 1);
+
+	lua_pushstring(ls, entity->GetTextureString().c_str());
+	return 1;
+}
+int entity_setTextureString(lua_State* ls)
+{
+	Entity* entity = l_CheckEntity(ls, 1);
+
+	const char* texture = lua_tolstring(ls, 2, nullptr);
+	entity->SetTextureString(texture);
+	return 1;
+}
 
 void RegisterEntity(lua_State* ls)
 {
@@ -139,10 +158,12 @@ void RegisterEntity(lua_State* ls)
 	{
 		{ "New",			entity_create },
 		{ "SetPosition",	entity_setPosition },
-		{ "Move",			entity_move},		
+		{ "Move",			entity_move},
 		{ "GetX",			entity_getX },
 		{ "GetY",			entity_getY },
 		{ "CollisionCheck",	entity_collisionCheck },
+		{ "GetTexture",		entity_getTextureString},
+		{ "SetTexture",		entity_setTextureString },
 		{ "__gc",			entity_destroy },
 		{ NULL, NULL }
 	};

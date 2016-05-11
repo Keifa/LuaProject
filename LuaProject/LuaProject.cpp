@@ -169,18 +169,18 @@ int main()
 						shape.setTexture(&groundTexture);
 						shape.setFillColor(sf::Color::Blue);
 						break;
-					case PLAYER:
+					/*case PLAYER:
 						shape.setTexture(&playerTexture);
 						shape.setFillColor(sf::Color::White);
-						break;
-					case BOX:
+						break;*/
+					/*case BOX:
 						shape.setTexture(&boxTexture);
 						shape.setFillColor(sf::Color::White);
 						break;
 					case BUTTON:
 						shape.setTexture(&buttonTexture);
 						shape.setFillColor(sf::Color::White);
-						break;
+						break;*/
 					default:
 						std::cout << "[C++] ERROR! UNVALID TILE TYPE!\n";
 						break;
@@ -189,6 +189,62 @@ int main()
 				w.Draw(shape);
 			}
 		}
+
+		lua_getglobal(L, "GetButton");
+
+		error = lua_pcall(L, 0, 3, 0);
+		if (error)
+		{
+			std::cerr << lua_tostring(L, -1) << std::endl;
+			lua_pop(L, 1);
+		}
+		else if (!error)
+		{
+			std::cout << lua_tointeger(L, -1) << " : " << lua_tointeger(L, -2) << " : " << lua_tointeger(L, -3) << "\n";
+			shape.setPosition(TILE_SIZE * lua_tointeger(L, -2), TILE_SIZE * lua_tointeger(L, -1));
+			shape.setTexture(&buttonTexture);
+			shape.setFillColor(sf::Color::White);
+			w.Draw(shape);
+			lua_pop(L, 3);
+		}
+		
+
+		lua_getglobal(L, "GetBox");
+
+		error = lua_pcall(L, 0, 3, 0);
+		if (error)
+		{
+			std::cerr << lua_tostring(L, -1) << std::endl;
+			lua_pop(L, 1);
+		}
+		else if (!error)
+		{
+			std::cout << lua_tointeger(L, -1) << " : " << lua_tointeger(L, -2) << " : " << lua_tointeger(L, -3) << "\n";
+			shape.setPosition(TILE_SIZE * lua_tointeger(L, -2), TILE_SIZE * lua_tointeger(L, -1));
+			shape.setTexture(&boxTexture);
+			shape.setFillColor(sf::Color::White);
+			w.Draw(shape);
+			lua_pop(L, 3);
+		}
+
+		lua_getglobal(L, "GetPlayer");
+
+		error = lua_pcall(L, 0, 3, 0);
+		if (error)
+		{
+			std::cerr << lua_tostring(L, -1) << std::endl;
+			lua_pop(L, 1);
+		}
+		else if (!error)
+		{
+			std::cout << lua_tointeger(L, -1) << " : " << lua_tointeger(L, -2) << " : " << lua_tointeger(L, -3) << "\n";
+			shape.setPosition(TILE_SIZE * lua_tointeger(L, -2), TILE_SIZE * lua_tointeger(L, -1));
+			shape.setTexture(&playerTexture);
+			shape.setFillColor(sf::Color::White);
+			w.Draw(shape);
+			lua_pop(L, 3);
+		}
+		
 		w.Display();
 		counter += 1;
 	}
