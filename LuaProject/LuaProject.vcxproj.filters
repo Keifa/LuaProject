@@ -49,6 +49,15 @@
     <None Include="window.lua">
       <Filter>Scripts</Filter>
     </None>
+    <None Include="list.map">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="levelHandler.lua">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="main.lua">
+      <Filter>Scripts</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="button.png">

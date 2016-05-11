@@ -1,6 +1,5 @@
 
 local gameOver = false
-
 local entitys = {}
 
 --Map
@@ -119,11 +118,9 @@ switch["LEFT"] =	function()
 	MoveX(-1)
 end
 
-switch["S"] =
-function()
-	print("Save")
+function Save(fileName)
 	map[g:GetY()][g:GetX()] = gID
-	local f = io.open("save.save", "w")
+	local f = io.open(fileName .. ".map", "w")
 	for y=1, mapSize do
     	local str = ""
    			for x=1, mapSize do
@@ -138,10 +135,15 @@ function()
 	io.close(f)
 end
 
-switch["R"] =		
+switch["S"] =
 function()
-	print("Load")
-	local f = io.open("save.save", "r")
+	print("Save")
+	Save("save")
+end
+
+function LoadMap(fileName)
+	local file = fileName .. ".map"
+	local f = io.open(file, "r")
 	y = 1
 	for line in f:lines() do
 		x = 1
@@ -161,7 +163,14 @@ function()
 		end
 		y = y + 1
 	end
-	io.close(f)
+	io.close(f)	
+end
+
+
+switch["R"] =		
+function()
+	print("Load")
+	LoadMap("level1")
 end
 
 function HandleKeyPress(key)

@@ -68,9 +68,17 @@ int main()
 	luaL_openlibs(L);
 
 	RegisterEntity(L);
+	
 	int error = luaL_loadfile(L, "map.lua") ||
 		lua_pcall(L, 0, 0, 0);
+	if (error)
+	{
+		std::cerr << lua_tostring(L, -1) << std::endl;
+		lua_pop(L, 1);
+	}
 
+	error = luaL_loadfile(L, "main.lua") ||
+		lua_pcall(L, 0, 0, 0);
 	if (error)
 	{
 		std::cerr << lua_tostring(L, -1) << std::endl;
@@ -81,6 +89,14 @@ int main()
 	int size = 0;
 	lua_getglobal(L, "mapSize");
 	size = lua_tointeger(L, -1);
+
+	lua_getglobal(L, "test");
+	error = lua_pcall(L, 0, 0, 0);
+	if (error)
+	{
+		std::cerr << lua_tostring(L, -1) << std::endl;
+		lua_pop(L, 1);
+	}
 			
 	Window w("window.lua");
 	int counter = 0;

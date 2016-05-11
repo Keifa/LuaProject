@@ -161,7 +161,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ghost.lua" />
+    <None Include="levelHandler.lua" />
+    <None Include="main.lua" />
     <None Include="map.lua" />
+    <None Include="list.map" />
     <None Include="script.lua" />
     <None Include="window.lua" />
   </ItemGroup>
