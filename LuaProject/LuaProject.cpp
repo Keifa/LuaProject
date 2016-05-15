@@ -45,7 +45,10 @@ int main()
 		{ sf::Keyboard::Right,	"RIGHT" },
 		{ sf::Keyboard::Left,	"LEFT" },
 		{ sf::Keyboard::S,		"S" },
-		{ sf::Keyboard::R,		"R" }
+		{ sf::Keyboard::R,		"R" },
+		{ sf::Keyboard::Num1,	"1" },
+		{ sf::Keyboard::Num2,	"2" },
+		{ sf::Keyboard::Num3,	"3" },
 	};
 
 	lua_State* L = luaL_newstate();
@@ -200,7 +203,6 @@ int main()
 		}
 		else if (!error)
 		{
-			std::cout << lua_tointeger(L, -1) << " : " << lua_tointeger(L, -2) << " : " << lua_tointeger(L, -3) << "\n";
 			shape.setPosition(TILE_SIZE * lua_tointeger(L, -2), TILE_SIZE * lua_tointeger(L, -1));
 			shape.setTexture(&buttonTexture);
 			shape.setFillColor(sf::Color::White);
@@ -219,7 +221,6 @@ int main()
 		}
 		else if (!error)
 		{
-			std::cout << lua_tointeger(L, -1) << " : " << lua_tointeger(L, -2) << " : " << lua_tointeger(L, -3) << "\n";
 			shape.setPosition(TILE_SIZE * lua_tointeger(L, -2), TILE_SIZE * lua_tointeger(L, -1));
 			shape.setTexture(&boxTexture);
 			shape.setFillColor(sf::Color::White);
@@ -237,7 +238,6 @@ int main()
 		}
 		else if (!error)
 		{
-			std::cout << lua_tointeger(L, -1) << " : " << lua_tointeger(L, -2) << " : " << lua_tointeger(L, -3) << "\n";
 			shape.setPosition(TILE_SIZE * lua_tointeger(L, -2), TILE_SIZE * lua_tointeger(L, -1));
 			shape.setTexture(&playerTexture);
 			shape.setFillColor(sf::Color::White);

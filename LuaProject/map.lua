@@ -13,6 +13,12 @@ for x=1, mapSize do
     end
 end
 
+--Selected
+local select = nil
+
+--Editing mode
+local edit = false
+
 --Player
 local p = Entity.New("player.png")
 local pID = 5
@@ -49,9 +55,14 @@ function GetTile(x,y)
 end
 
 function Clicked(x,y)
-	local value = map[y][x]
-	value = (value + 1) % 4
-	map[y][x] = value
+	if HasSelected() then
+		select:SetPosition(x,y)
+		select = nil
+	else
+		local value = map[y][x]
+		value = (value + 1) % 2
+		map[y][x] = value
+	end
 end
 
 function ValidMove(dir, currentPos)
@@ -111,6 +122,21 @@ end
 
 switch["LEFT"] =	function() 
 	MoveX(-1)
+end
+
+switch["1"] =	function() 
+	select = p
+	print("Player selected")
+end
+
+switch["2"] =	function() 
+	select = g
+	print("Goal button selected")
+end
+
+switch["3"] =	function() 
+	select = b
+	print("Box selected")
 end
 
 switch["S"] =
@@ -205,9 +231,25 @@ end
 function GetPlayer()
 	return p:GetTexture(),p:GetX()-1,p:GetY()-1
 end
+
 function GetBox()
-	return b:GetTexture(),b:GetX(),b:GetY()
+	return b:GetTexture(),b:GetX()-1,b:GetY()-1
 end
+
 function GetButton()
+	return g:GetTexture(),g:GetX()-1,g:GetY()-1
+end
+function HasSelected()
+	if select == nil then
+		return false
+	else
+		return true
+	end
+end
+function GetSelected()
 	return g:GetTexture(),g:GetX(),g:GetY()
+end
+
+function isEditing()
+	return edit
 end
