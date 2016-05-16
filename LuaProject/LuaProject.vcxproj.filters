@@ -49,6 +49,9 @@
     <None Include="window.lua">
       <Filter>Scripts</Filter>
     </None>
+    <None Include="handleLevelChange.lua">
+      <Filter>Scripts</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="button.png">

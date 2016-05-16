@@ -1,6 +1,6 @@
 
 local gameOver = false
-
+local mapName = ""
 local entitys = {}
 
 --Map
@@ -169,43 +169,48 @@ function()
 	io.close(f)
 end
 
-switch["R"] =		
-function()
-	print("Load")
-	local f = io.open("save.save", "r")
+function LoadMap(file)
+	gameOver = false
+	local f = io.open(file .. ".save", "r")
 	y = 1
 	for line in f:lines() do
-		x = 1
-
-		
 		t = {}
 		k = 1
 		for v in string.gmatch(line, "([^".. "," .."]+)") do
-			t[k] = v
-			
-			k = k +1
+			if string.len(v) == 1 then
+				t[k] = tonumber(v)
+			else
+				t[k] = v
+			end
+			k = k + 1
 		end
 
 		if t[1] == "[player]" then
 			p:SetTexture(t[2])
 			p:SetPosition(t[3],t[4])
-		end
-		if t[1] == "[box]" then
+		elseif t[1] == "[box]" then
 			b:SetTexture(t[2])
 			b:SetPosition(t[3],t[4])
-		end
-		if t[1] == "[button]" then
+		elseif t[1] == "[button]" then
 			g:SetTexture(t[2])
 			g:SetPosition(t[3],t[4])
+		else
+			for i = 1, k - 1 do
+				map[y][i] = t[i]
+			end
+			y = y + 1
 		end
-
-		--for l in string.gmatch(line, "([^".. "," .."]+)") do			
-			--map[y][x] = tonumber(l)
-			--x = x + 1
-		--end
-		y = y + 1
 	end
 	io.close(f)
+	for y = 1, mapSize do
+		print(map[y][1]..map[y][2]..map[y][3]..map[y][4]..map[y][5]..map[y][6]..map[y][7]..map[y][8]..map[y][9]..map[y][10])
+	end
+end
+
+switch["R"] =		
+function()
+	print("Load")
+	LoadMap(mapName)
 end
 
 function HandleKeyPress(key)
@@ -252,4 +257,12 @@ end
 
 function isEditing()
 	return edit
+end
+
+function GetGameOver()
+	return gameOver
+end
+
+function SetMapName(name)
+	mapName = name
 end

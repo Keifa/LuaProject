@@ -79,7 +79,23 @@ int main()
 		std::cerr << lua_tostring(L, -1) << std::endl;
 		lua_pop(L, 1);
 	}
-	
+
+	error = luaL_loadfile(L, "handleLevelChange.lua") ||
+		lua_pcall(L, 0, 0, 0);
+	if (error)
+	{
+		std::cerr << lua_tostring(L, -1) << std::endl;
+		lua_pop(L, 1);
+	}
+
+	/*lua_getglobal(L, "Test");
+	error = lua_pcall(L, 0, 0, 0);
+	if (error)
+	{
+		std::cerr << lua_tostring(L, -1) << std::endl;
+		lua_pop(L, 1);
+	}*/
+
 	std::string tempStr = "";
 	int size = 0;
 	lua_getglobal(L, "mapSize");
@@ -89,6 +105,13 @@ int main()
 	int counter = 0;
 	while (w.IsOpen())
 	{
+		lua_getglobal(L, "CheckLevelDone");
+		error = lua_pcall(L, 0, 0, 0);
+		if (error)
+		{
+			std::cerr << lua_tostring(L, -1) << std::endl;
+			lua_pop(L, 1);
+		}
 		sf::Event event;
 		while (w.PollEvent(event))
 		{
