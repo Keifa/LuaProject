@@ -1,4 +1,4 @@
-print("[Lua] Loaded Editor")
+print("[Lua] Loaded Editor\nPress R and write the name of the file you want to load\nPress S and write the name of the level you want to save")
 print("Levels:")
 local f = io.open("load.levels", "r")
 for line in f:lines() do
