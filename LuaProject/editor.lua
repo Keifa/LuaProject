@@ -1,6 +1,4 @@
 print("[Lua] Loaded Editor")
-local gameOver = false
-local mapName = ""
 
 --Map
 mapSize = 10
@@ -14,9 +12,6 @@ end
 
 --Selected
 local select = nil
-
---Editing mode
-local edit = false
 
 --Player
 local p = Entity.New("player.png")
@@ -37,18 +32,6 @@ local b = Entity.New("box.png")
 local bID = 6
 b:SetPosition(3,3)
 
-function MoveBox(xDir, yDir)
-	map[b:GetY()][b:GetX()] = 0
-	b:Move(xDir, yDir)
-	if g:CollisionCheck(b:GetX(), b:GetY()) then
-		gameOver = true
-		--print(gameOver)
-	end
-end
-
---Wall
-local wID = 1
-
 function GetTile(x,y)
 	return map[y][x]
 end
@@ -64,64 +47,7 @@ function Clicked(x,y)
 	end
 end
 
-function ValidMove(dir, currentPos)
-	local posAfter = currentPos + dir
-	if posAfter <= 0 or posAfter > mapSize then
-		do return false end
-	end
-	return true
-end
-
-function MoveY(dir)
-	-- if player pos is inside map and if the tile is walkable
-	if ValidMove(dir, p:GetY()) and GetTile(p:GetX(), p:GetY() + dir) ~= wID then
-		-- Check if collision with box
-		if b:CollisionCheck(p:GetX(), p:GetY() + dir) then
-			--  Check if box pos is inside map and if the tile is walkable
-			if ValidMove(dir, b:GetY()) and GetTile(b:GetX(), b:GetY() + dir) ~= wID then
-				MoveBox(0, dir)
-				MovePlayer(0, dir)
-			end
-		-- if no collision with box -> move
-		else
-			MovePlayer(0, dir)
-		end
-	end
-end
-
-function MoveX(dir)
-	--Check if pos is inside map and if the tile is walkable
-	if ValidMove(dir, p:GetX()) and GetTile(p:GetX() + dir, p:GetY()) ~= wID then
-		-- Check if collision with box
-		if b:CollisionCheck(p:GetX() + dir, p:GetY()) then
-			--  Check if box pos is inside map and if the tile is walkable
-			if ValidMove(dir, b:GetX()) and GetTile(b:GetX() + dir, b:GetY()) ~= wID then
-				MoveBox(dir, 0)
-				MovePlayer(dir, 0)
-			end
-		-- if no collision with box -> move
-		else
-			MovePlayer(dir, 0)
-		end
-	end
-end
-
 local switch = {}
-switch["UP"] =		function() 
-	MoveY(-1)
-end
-
-switch["DOWN"] =	function() 
-	MoveY(1)
-end
-
-switch["RIGHT"] =	function() 
-	MoveX(1)
-end
-
-switch["LEFT"] =	function() 
-	MoveX(-1)
-end
 
 switch["1"] =	function() 
 	select = p
@@ -140,8 +66,12 @@ end
 
 switch["S"] =
 function()
-	print("Save")
-	local f = io.open("save.save", "w")
+	print("Saving")
+
+	print("Input Save Name: ")
+	local file = io.read()
+
+	local f = io.open(file .. ".save", "w")
 
 	local string = ""
 	--Player save
@@ -166,6 +96,7 @@ function()
     	f:write(str)
 	end
 	io.close(f)
+	print("Finished Saving")
 end
 
 function LoadMap(file)
@@ -201,16 +132,17 @@ function LoadMap(file)
 		end
 	end
 	io.close(f)
-	--for y = 1, mapSize do
-		--print(map[y][1]..map[y][2]..map[y][3]..map[y][4]..map[y][5]..map[y][6]..map[y][7]..map[y][8]..map[y][9]..map[y][10])
-	--end
 end
 
 switch["R"] =		
 function()
 	print("Reload")
-	LoadMap(mapName)
+	print("Input Save Name: ")
+	local file = io.read()
+	LoadMap(file)
 end
+
+
 
 function HandleKeyPress(key)
 	switch[key]()
@@ -252,16 +184,4 @@ function HasSelected()
 end
 function GetSelected()
 	return g:GetTexture(),g:GetX(),g:GetY()
-end
-
-function isEditing()
-	return edit
-end
-
-function GetGameOver()
-	return gameOver
-end
-
-function SetMapName(name)
-	mapName = name
 end

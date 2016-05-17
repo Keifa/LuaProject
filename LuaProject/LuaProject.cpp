@@ -4,6 +4,7 @@
 // Initiation functions
 void InitTextures(sf::Texture* player, sf::Texture* box, sf::Texture* ground, sf::Texture* button);
 bool InitLua(lua_State* L);
+bool InitEditorLua(lua_State* L);
 
 // Draw functions
 void DrawTiles(Window& w, sf::Shape& shape, sf::Texture* texture, lua_State* L, const std::string& getEntityString, int x, int y);
@@ -17,11 +18,23 @@ void HandleKeyPressed(lua_State* L, sf::Event& event);
 //
 void Update(lua_State* L);
 
+bool editor = true;
+
 int main()
 {
 	lua_State* L = luaL_newstate();
 	
-	if (InitLua(L))
+	bool hasLoaded = false;
+	if (editor)
+	{
+		hasLoaded = InitEditorLua(L);
+	}
+	else
+	{
+		hasLoaded = InitLua(L);
+	}
+
+	if (hasLoaded)
 	{
 		Window w("window.lua");
 
@@ -76,7 +89,10 @@ int main()
 
 		while (w.IsOpen())
 		{
-			Update(L);
+			if (!editor)
+			{
+				Update(L);
+			}
 			HandleEvents(w, L, event);
 
 			for (int y = 0; y < size; y++)
@@ -203,6 +219,26 @@ bool InitLua(lua_State* L)
 	return check;
 }
 
+bool InitEditorLua(lua_State* L)
+{
+	bool check = false;
+	luaL_openlibs(L);
+	if (L)
+	{
+		RegisterEntity(L);
+		int error = luaL_loadfile(L, "editor.lua") ||
+			lua_pcall(L, 0, 0, 0);
+
+		if (error)
+		{
+			std::cerr << lua_tostring(L, -1) << std::endl;
+			lua_pop(L, 1);
+		}
+		check = true;
+	}
+	return check;
+}
+
 void HandleEvents(Window& w, lua_State* L, sf::Event& event)
 {
 	while (w.PollEvent(event))
@@ -238,6 +274,10 @@ void HandleMouseButtonPressed(lua_State* L, sf::Event& event)
 void HandleKeyPressed(lua_State* L, sf::Event& event)
 {
 	std::string tempStr = keyPressMap[event.key.code];
+	if (editor)
+	{
+		tempStr = editorKeyPressMap[event.key.code];
+	}
 	if (tempStr != "")
 	{
 		lua_getglobal(L, "HandleKeyPress");

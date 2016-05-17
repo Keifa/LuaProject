@@ -29,6 +29,15 @@ std::map<int, std::string> keyPressMap =
 	{ sf::Keyboard::Num3,	"3" },
 };
 
+std::map<int, std::string> editorKeyPressMap =
+{
+	{ sf::Keyboard::S,		"S" },
+	{ sf::Keyboard::R,		"R" },
+	{ sf::Keyboard::Num1,	"1" },
+	{ sf::Keyboard::Num2,	"2" },
+	{ sf::Keyboard::Num3,	"3" },
+};
+
 enum EntityTypes
 {
 	PLAYER,

@@ -55,6 +55,9 @@
     <None Include="handleLevelChange.lua">
       <Filter>Scripts</Filter>
     </None>
+    <None Include="editor.lua">
+      <Filter>Scripts</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="button.png">
