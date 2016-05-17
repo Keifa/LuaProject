@@ -160,6 +160,7 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="helper.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Variables.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
