@@ -1,5 +1,9 @@
 print("[Lua] Loaded Editor")
-
+print("Levels:")
+local f = io.open("load.levels", "r")
+for line in f:lines() do
+	print(line)
+end
 --Map
 mapSize = 10
 local map = {}
