@@ -43,7 +43,7 @@ function MoveBox(xDir, yDir)
 	b:Move(xDir, yDir)
 	if g:CollisionCheck(b:GetX(), b:GetY()) then
 		gameOver = true
-		print(gameOver)
+		--print(gameOver)
 	end
 end
 
@@ -202,14 +202,14 @@ function LoadMap(file)
 		end
 	end
 	io.close(f)
-	for y = 1, mapSize do
-		print(map[y][1]..map[y][2]..map[y][3]..map[y][4]..map[y][5]..map[y][6]..map[y][7]..map[y][8]..map[y][9]..map[y][10])
-	end
+	--for y = 1, mapSize do
+		--print(map[y][1]..map[y][2]..map[y][3]..map[y][4]..map[y][5]..map[y][6]..map[y][7]..map[y][8]..map[y][9]..map[y][10])
+	--end
 end
 
 switch["R"] =		
 function()
-	print("Load")
+	print("Reload")
 	LoadMap(mapName)
 end
 

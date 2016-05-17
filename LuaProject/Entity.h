@@ -22,7 +22,7 @@ public:
 	{
 		_x = x;
 		_y = y;
-		std::cout << "[c++] Set Position\n";
+		//std::cout << "[c++] Set Position\n";
 	}
 	void SetTextureString(std::string texture)
 	{
@@ -65,7 +65,7 @@ int entity_create(lua_State* ls)
 		luaL_getmetatable(ls, "MetaEntity");
 		lua_setmetatable(ls, -2);
 
-		std::cout << "[c++] Created Entity\n";
+		//std::cout << "[c++] Created Entity\n";
 	}
 	else {
 		//something is fucked up
