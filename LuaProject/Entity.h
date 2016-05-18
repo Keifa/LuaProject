@@ -59,10 +59,22 @@ int entity_create(lua_State* ls)
 	const char* texture = lua_tolstring(ls, 1, nullptr);
 	if (texture != nullptr)
 	{
+		// Allocates a new block of memory with the given size, pushes onto the stack a new full userdata with the block address and returns this address
 		Entity** entity = reinterpret_cast<Entity**>(lua_newuserdata(ls, sizeof(Entity*)));
 		*entity = new Entity(texture);
+		/*
+			1 Adress -1
+		*/
 
+		// Pushes onto the stack the metatable associated with the name "MetaEntity" in the registry
 		luaL_getmetatable(ls, "MetaEntity");
+
+		/*
+			2 metaTable -1
+			1 Adress	-2
+		*/
+
+		// Pop table from the stack and sets it as the new metatable for the value at the given index
 		lua_setmetatable(ls, -2);
 
 		//std::cout << "[c++] Created Entity\n";
@@ -77,6 +89,7 @@ Entity* l_CheckEntity(lua_State* ls, int n)
 {
 	Entity* EntityPtr = nullptr;
 
+	// Check if n is of userdata-type, if not return nullptr
 	void* ptr = luaL_testudata(ls, n, "MetaEntity");
 	if (ptr != nullptr)
 	{
@@ -152,6 +165,8 @@ int entity_setTextureString(lua_State* ls)
 
 void RegisterEntity(lua_State* ls)
 {
+	// Creates a new table to be used as a metatable for userdata, adds it tot the registry with key "MetaEntity"
+	// Then pushes onto the stack the final value associated with "MetaEntity" in the registry
 	luaL_newmetatable(ls, "MetaEntity");
 
 	luaL_Reg sEntityRegs[] =
@@ -168,11 +183,16 @@ void RegisterEntity(lua_State* ls)
 		{ NULL, NULL }
 	};
 
+	// Registers all functions into the table on the top of the stack
 	luaL_setfuncs(ls, sEntityRegs, 0);
 
+	// Pushes a copy of the element at the given index onto the stack
 	lua_pushvalue(ls, -1);
 
+	// Does the equivalent to t[k] = v, where t is the value at the given index and v is the value at the top of the stack
+	// then pops the value from the stack
 	lua_setfield(ls, -1, "__index");
 
+	// Pops a value from the stack and sets it as the new value of global name
 	lua_setglobal(ls, "Entity");
 }

@@ -18,7 +18,7 @@ void HandleKeyPressed(lua_State* L, sf::Event& event);
 //
 void Update(lua_State* L);
 
-bool editor = true;
+bool editor = false;
 
 int main()
 {
@@ -42,36 +42,6 @@ int main()
 		shape.setFillColor(sf::Color::White);
 		shape.setOutlineColor(sf::Color::Black);
 		shape.setOutlineThickness(2);
-
-		/*std::vector<sf::Texture*> textures;
-		EnityStruct player =
-		{
-			EntityTypes::PLAYER,
-			"Player.png",
-			nullptr,
-			"GetPlayer"
-		};
-		EnityStruct box =
-		{
-			EntityTypes::BOX,
-			"Box.png",
-			nullptr,
-			"GetBox"
-		};
-		EnityStruct goal =
-		{
-			EntityTypes::GOAL,
-			"button.png",
-			nullptr,
-			"GetButton"
-		};
-		EnityStruct groundTile =
-		{
-			EntityTypes::GROUNDTILE,
-			"ground.png",
-			nullptr,
-			"GetTile"
-		};*/
 
 		sf::Texture* playerTexture = new sf::Texture(),
 				   * boxTexture =	 new sf::Texture(),
